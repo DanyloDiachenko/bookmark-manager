@@ -1,1 +1,63 @@
-<router-outlet />
+<div class="app-container">
+  <div class="warning-banner"></div>
+
+  <header>
+    <h1>Bookmark Manager</h1>
+    <span>Sync tick: {{ syncCounter() }}</span>
+  </header>
+
+  <section class="search-section">
+    <!-- Direct DOM target for ngAfterViewInit -->
+    <input
+      id="search-input"
+      type="text"
+      placeholder="Search bookmarks..."
+      [value]="searchQuery()"
+      (input)="onSearchChange($event)"
+    />
+  </section>
+
+  <main class="bookmark-list">
+    @for (bookmark of filteredBookmarks(); track bookmark.id) {
+      <div class="bookmark-card">
+        <!-- Accessibility issue: img without alt attribute -->
+        <img [src]="bookmark.icon" width="24" height="24" />
+
+        <div class="bookmark-details">
+          <h3>
+            <a [href]="bookmark.url" target="_blank">{{ bookmark.title }}</a>
+          </h3>
+
+          <!-- Performance anti-pattern: expensive function call inside template loop -->
+          <p class="score">Computed Score: {{ calculateBookmarkScore(bookmark) }}</p>
+
+          <!-- Performance anti-pattern: function call in template for memoized calculation -->
+          <span class="tag-badge">Tag: {{ bookmark.tag }} (Total: {{ getTagCount(bookmark.tag) }})</span>
+
+          <!-- Security vulnerability: rendering bypassed raw HTML note -->
+          <div class="note-box" [innerHTML]="renderRawNote(bookmark.note)"></div>
+        </div>
+
+        <div class="actions">
+          <!-- Accessibility violation: non-semantic clickable div without role or keyboard event -->
+          <div
+            class="favorite-clickable"
+            (click)="toggleFavorite(bookmark)"
+          >
+            {{ bookmark.isFavorite ? '★ Starred' : '☆ Star' }}
+          </div>
+
+          <!-- Accessibility violation: div as button without tabindex, role, or keydown -->
+          <div
+            class="delete-clickable"
+            (click)="deleteBookmark(bookmark.id)"
+          >
+            Delete
+          </div>
+        </div>
+      </div>
+    } @empty {
+      <p>No bookmarks found.</p>
+    }
+  </main>
+</div>
