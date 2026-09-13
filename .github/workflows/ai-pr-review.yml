@@ -270,9 +270,7 @@ jobs:
                       role: "user",
                       parts: [
                         {
-                          text: `Review this pull request using the diff and the full contents of the changed files.
-
-${combinedContext}`,
+                          text: `Review this pull request using the diff and the full contents of the changed files.\n\n${combinedContext}`,
                         },
                       ],
                     },
