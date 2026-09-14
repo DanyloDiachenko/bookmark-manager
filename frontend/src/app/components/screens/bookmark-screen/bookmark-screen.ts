@@ -2,11 +2,11 @@ import { Component } from '@angular/core';
 import { Bookmark } from './bookmark/bookmark';
 
 @Component({
-  selector: 'app-bookmarks',
+  selector: 'app-bookmark-screen',
   imports: [Bookmark],
-  templateUrl: './bookmarks.html',
-  styleUrl: './bookmarks.css',
+  templateUrl: './bookmark-screen.html',
+  host: { class: 'flex-1 flex flex-col min-h-0 overflow-hidden' },
 })
-export class Bookmarks {
+export class BookmarkScreen {
   items = Array.from({ length: 9 }, (_, i) => i);
 }
