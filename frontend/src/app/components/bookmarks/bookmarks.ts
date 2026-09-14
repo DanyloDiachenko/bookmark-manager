@@ -7,4 +7,6 @@ import { Bookmark } from './bookmark/bookmark';
   templateUrl: './bookmarks.html',
   styleUrl: './bookmarks.css',
 })
-export class Bookmarks { }
+export class Bookmarks {
+  items = Array.from({ length: 9 }, (_, i) => i);
+}
