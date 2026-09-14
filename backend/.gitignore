@@ -1,2 +1,5 @@
 bin/
 obj/
+.dotnet/
+.config/
+appsettings.Development.json
