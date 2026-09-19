@@ -31,7 +31,13 @@
     @if (folders().length > 0) {
       @for (folder of folders(); track folder.id) {
         <button
-          class="w-full flex items-center gap-2.5 px-2.5 py-1.5 rounded-sm text-sm transition-colors text-left text-muted-foreground hover:text-foreground hover:bg-accent"
+          class="w-full flex items-center gap-2.5 px-2.5 py-1.5 rounded-sm text-sm transition-colors text-left"
+          (click)="changeFolder(folder.id)"
+          [ngClass]="
+            currentFolderId() === folder.id
+              ? 'bg-foreground text-background font-medium'
+              : 'text-muted-foreground hover:text-foreground hover:bg-accent'
+          "
         >
           <span
             class="w-2 h-2 rounded-full shrink-0"

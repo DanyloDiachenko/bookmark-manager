@@ -31,8 +31,14 @@
     @if (tags().length > 0) {
       @for (tag of tags(); track tag.id) {
         <button
-          class="text-[11px] px-2 py-0.5 rounded-full border transition-colors border-border text-muted-foreground hover:text-foreground hover:border-foreground flex items-center justify-between gap-2"
+          class="text-[11px] px-2 py-0.5 rounded-full border transition-colors border-border flex items-center justify-between gap-2"
           style="font-family: 'JetBrains Mono', monospace"
+          (click)="changeCurrentTag(tag.id)"
+          [ngClass]="
+            currentTagId() === tag.id
+              ? 'bg-foreground text-background font-medium'
+              : 'text-muted-foreground hover:text-foreground hover:bg-accent'
+          "
         >
           {{ tag.title }}
           <button class="cursor-pointer leading-0" (click)="deleteTag(tag.id)">
