@@ -1,5 +1,5 @@
 import { HttpClient } from '@angular/common/http';
-import { inject, Injectable, signal } from '@angular/core';
+import { computed, inject, Injectable, OnInit, signal } from '@angular/core';
 import { CreateBookmarkRequest, IBookmark } from './bookmarks.types';
 import { finalize, Observable, tap } from 'rxjs';
 
@@ -11,6 +11,17 @@ export class BookmarksService {
   readonly isLoadingSignal = signal<boolean>(false);
   readonly bookmarksSignal = signal<IBookmark[]>([]);
   readonly isLoading = this.isLoadingSignal.asReadonly();
+  readonly bookmarks = this.bookmarksSignal.asReadonly();
+
+  readonly allBookmarkCount = computed(() => this.bookmarksSignal().length);
+
+  readonly starredCount = computed(
+    () => this.bookmarksSignal().filter((b) => b.isStarred === true).length,
+  );
+
+  readonly realLaterCount = computed(
+    () => this.bookmarksSignal().filter((b) => b.isReadLater === true).length,
+  );
 
   public getAll(): Observable<IBookmark[]> {
     this.isLoadingSignal.set(true);

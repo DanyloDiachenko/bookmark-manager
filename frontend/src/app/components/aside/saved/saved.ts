@@ -1,4 +1,5 @@
-import { Component } from '@angular/core';
+import { Component, inject } from '@angular/core';
+import { BookmarksService } from '../../screens/bookmark-screen/bookmarks.service';
 
 @Component({
   selector: 'app-saved',
@@ -6,4 +7,7 @@ import { Component } from '@angular/core';
   templateUrl: './saved.html',
   styleUrl: './saved.css',
 })
-export class Saved {}
+export class Saved {
+  private readonly bookmarkService = inject(BookmarksService);
+  readonly allBookmarkCount = this.bookmarkService.allBookmarkCount;
+}

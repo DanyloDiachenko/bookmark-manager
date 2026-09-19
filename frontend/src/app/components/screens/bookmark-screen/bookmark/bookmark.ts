@@ -1,4 +1,5 @@
-import { Component } from '@angular/core';
+import { Component, input } from '@angular/core';
+import { IBookmark } from '../bookmarks.types';
 
 @Component({
   selector: 'app-bookmark',
@@ -6,4 +7,6 @@ import { Component } from '@angular/core';
   templateUrl: './bookmark.html',
   styleUrl: './bookmark.css',
 })
-export class Bookmark {}
+export class Bookmark {
+  readonly bookmark = input.required<IBookmark>();
+}

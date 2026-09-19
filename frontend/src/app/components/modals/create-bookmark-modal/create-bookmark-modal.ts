@@ -4,6 +4,9 @@ import { CreateBookmarkRequest } from '../../screens/bookmark-screen/bookmarks.t
 import { NgSelectModule } from '@ng-select/ng-select';
 import { FoldersService } from '../../aside/folders/folders.service';
 import { TagsService } from '../../aside/tags/tags.service';
+import { BookmarksService } from '../../screens/bookmark-screen/bookmarks.service';
+import { getErrorMessage } from '../../../core/utils/error.utils';
+import { finalize } from 'rxjs';
 
 @Component({
   selector: 'app-create-bookmark-modal',
@@ -16,13 +19,15 @@ export class CreateBookmarkModal {
   private readonly fb = inject(FormBuilder);
   private readonly foldersService = inject(FoldersService);
   private readonly tagsService = inject(TagsService);
+  private readonly bookmarkService = inject(BookmarksService);
+
   readonly folders = this.foldersService.folders;
   readonly tags = this.tagsService.tags;
 
   readonly isOpen = input<boolean>(false);
   readonly close = output<void>();
-  readonly createBookmark = output<CreateBookmarkRequest>();
   readonly isSubmitting = signal<boolean>(false);
+  readonly serverError = signal<string | null>(null);
 
   readonly bookmarkForm = this.fb.nonNullable.group({
     title: ['', [Validators.required, Validators.maxLength(50)]],
@@ -35,6 +40,7 @@ export class CreateBookmarkModal {
   });
 
   public onClose() {
+    this.serverError.set(null);
     this.bookmarkForm.reset({
       url: '',
       title: '',
@@ -48,6 +54,8 @@ export class CreateBookmarkModal {
   }
 
   public onSubmit() {
+    this.serverError.set(null);
+
     if (this.bookmarkForm.invalid) {
       this.bookmarkForm.markAllAsTouched();
       return;
@@ -64,6 +72,18 @@ export class CreateBookmarkModal {
       isStarred: val.isStarred ?? false,
       isReadLater: val.isReadLater ?? false,
     };
-    this.createBookmark.emit(request);
+
+    this.isSubmitting.set(true);
+    this.bookmarkService
+      .create(request)
+      .pipe(finalize(() => this.isSubmitting.set(false)))
+      .subscribe({
+        next: () => {
+          this.onClose();
+        },
+        error: (err) => {
+          this.serverError.set(getErrorMessage(err, 'Failed to create bookmark'));
+        },
+      });
   }
 }

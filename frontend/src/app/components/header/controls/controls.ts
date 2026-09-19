@@ -1,7 +1,6 @@
 import { Component, inject, signal } from '@angular/core';
 import { CreateBookmarkModal } from '../../modals/create-bookmark-modal/create-bookmark-modal';
 import { BookmarksService } from '../../screens/bookmark-screen/bookmarks.service';
-import { CreateBookmarkRequest } from '../../screens/bookmark-screen/bookmarks.types';
 
 @Component({
   selector: 'app-controls',
@@ -24,11 +23,5 @@ export class Controls {
 
   public isLoading() {
     return this.bookmarkService.isLoading();
-  }
-
-  public createBookmark(data: CreateBookmarkRequest) {
-    this.bookmarkService.create(data).subscribe({
-      next: () => this.closeCreateBookmarkModal(),
-    });
   }
 }

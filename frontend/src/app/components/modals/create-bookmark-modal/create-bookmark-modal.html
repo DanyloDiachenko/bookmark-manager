@@ -176,6 +176,11 @@
             <span>Read later</span>
           </label>
         </div>
+        @if (serverError()) {
+          <div class="text-xs text-destructive">
+            {{ serverError() }}
+          </div>
+        }
         <div class="flex items-center justify-end gap-3 pt-3 mt-1">
           <button
             type="button"
