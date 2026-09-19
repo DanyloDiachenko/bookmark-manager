@@ -52,6 +52,40 @@ public static class FolderEndpoints
             return Results.Created($"/api/folders/{folder.Id}", new FolderResponse(folder.Id, folder.Title, folder.Color, 0));
         });
 
+        group.MapPut("{id:guid}", async (
+            Guid id,
+            UpdateFolderRequest request,
+            ClaimsPrincipal userClaims,
+            AppDbContext db
+        ) =>
+        {
+            if (string.IsNullOrWhiteSpace(request.Title))
+            {
+                return Results.BadRequest(new { message = "Folder title is required." });
+            }
+            if (string.IsNullOrWhiteSpace(request.Color))
+            {
+                return Results.BadRequest(new { message = "Folder color is required." });
+            }
+
+            var userId = userClaims.GetUserId();
+            var folder = await db.Folders
+                .Include(f => f.Bookmarks)
+                .FirstOrDefaultAsync(f => f.Id == id && f.UserId == userId);
+
+            if (folder == null)
+            {
+                return Results.NotFound(new { message = "Folder was not found" });
+            }
+
+            folder.Title = request.Title.Trim();
+            folder.Color = request.Color.Trim();
+
+            await db.SaveChangesAsync();
+
+            return Results.Ok(new FolderResponse(folder.Id, folder.Title, folder.Color, folder.Bookmarks.Count));
+        });
+
         group.MapDelete("{id:guid}", async (
         Guid id, ClaimsPrincipal userClaims, AppDbContext db
         ) =>

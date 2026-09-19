@@ -1,4 +1,5 @@
-import { Component } from '@angular/core';
+import { Component, inject } from '@angular/core';
+import { FoldersService } from './folders.service';
 
 @Component({
   selector: 'app-folders',
@@ -6,4 +7,11 @@ import { Component } from '@angular/core';
   templateUrl: './folders.html',
   styleUrl: './folders.css',
 })
-export class Folders {}
+export class Folders {
+  readonly foldersService = inject(FoldersService);
+  readonly folders = this.foldersService.folders();
+
+  ngOnInit() {
+    this.foldersService.getAll().subscribe();
+  }
+}
