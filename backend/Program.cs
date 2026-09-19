@@ -15,6 +15,7 @@ builder.Services.AddDbContext<AppDbContext>(options =>
 });
 
 builder.Services.AddScoped<ITokenService, TokenService>();
+builder.Services.AddHttpClient<IWebMetadataService, WebMetadataService>();
 builder.Services.AddValidatorsFromAssemblyContaining<Program>();
 
 var jwtKey = builder.Configuration["Jwt:Key"]
@@ -37,12 +38,34 @@ builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
 
 builder.Services.AddAuthorization();
 
+builder.Services.AddCors(options =>
+{
+    options.AddDefaultPolicy(policy =>
+    {
+        policy.SetIsOriginAllowed(origin =>
+            {
+                if (Uri.TryCreate(origin, UriKind.Absolute, out var uri))
+                {
+                    return uri.Host == "localhost" || uri.Host == "127.0.0.1";
+                }
+                return false;
+            })
+            .AllowAnyHeader()
+            .AllowAnyMethod()
+            .AllowCredentials();
+    });
+});
+
 var app = builder.Build();
 
+app.UseCors();
 app.UseAuthentication();
 app.UseAuthorization();
 
 app.MapGroup("/api/auth").MapAuthEndpoints();
+app.MapFolderEndpoints();
+app.MapTagEndpoints();
+app.MapBookmarkEndpoints();
 
 app.MapGet("/", () => "Bookmark Manager API is running!");
 

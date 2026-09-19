@@ -17,5 +17,5 @@ public class Bookmark
     public Guid? FolderId { get; set; }
     public Folder? Folder { get; set; }
 
-    public ICollection<Tag>? Tags { get; set; } = new List<Tag>();
+    public ICollection<Tag> Tags { get; set; } = new List<Tag>();
 }
