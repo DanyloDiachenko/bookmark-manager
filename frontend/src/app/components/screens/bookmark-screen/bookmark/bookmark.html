@@ -59,7 +59,7 @@
           <polyline points="12 6 12 12 16 14"></polyline>
         </svg></button
       ><a
-        href="https://refactoringui.com"
+        [href]="bookmark().url"
         target="_blank"
         rel="noreferrer"
         aria-label="Open bookmark in new tab"
@@ -83,6 +83,7 @@
       ><button
         aria-label="Delete bookmark"
         class="p-1 rounded-sm hover:bg-accent transition-colors text-muted-foreground hover:text-foreground hover:text-destructive"
+        (click)="deleteBookmark(bookmark().id)"
       >
         <svg
           xmlns="http://www.w3.org/2000/svg"
