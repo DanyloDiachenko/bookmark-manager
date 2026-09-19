@@ -1,1 +1,207 @@
-<p>create-bookmark-modal works!</p>
+@if (isOpen()) {
+  <div
+    class="fixed inset-0 z-50 bg-black/40 backdrop-blur-[1px] flex items-center justify-center p-4 animate-in fade-in duration-150"
+    (click)="onClose()"
+  >
+    <div
+      class="w-full max-w-[420px] max-h-[90vh] bg-card border border-border rounded-lg shadow-2xl overflow-y-auto flex flex-col"
+      (click)="$event.stopPropagation()"
+    >
+      <div class="flex items-center justify-between px-6 py-4 border-b border-border/40">
+        <h2 class="text-sm font-semibold tracking-tight text-foreground">Create Bookmark</h2>
+        <button
+          type="button"
+          (click)="onClose()"
+          class="text-muted-foreground hover:text-foreground transition-colors p-1 rounded-sm cursor-pointer"
+          aria-label="Close"
+        >
+          <svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+            <path
+              stroke-linecap="round"
+              stroke-linejoin="round"
+              stroke-width="1.5"
+              d="M6 18L18 6M6 6l12 12"
+            />
+          </svg>
+        </button>
+      </div>
+      <form
+        [formGroup]="bookmarkForm"
+        (ngSubmit)="onSubmit()"
+        class="flex flex-col gap-4 px-6 py-4"
+      >
+        <div class="flex flex-col gap-1.5">
+          <label
+            for="bookmark-title"
+            class="text-[10px] tracking-wider uppercase text-muted-foreground"
+            style="font-family: 'JetBrains Mono', monospace"
+          >
+            Title
+          </label>
+          <input
+            id="bookmark-title"
+            type="text"
+            formControlName="title"
+            placeholder="Bookmark title..."
+            class="w-full px-3 py-2 text-sm bg-muted/40 border border-border rounded-sm focus:outline-none focus:ring-1 focus:ring-ring text-foreground placeholder:text-muted-foreground/60 transition-colors"
+          />
+          @if (
+            bookmarkForm.controls.title.touched && bookmarkForm.controls.title.hasError('required')
+          ) {
+            <span class="text-xs text-destructive"> Title is required. </span>
+          }
+        </div>
+        <div class="flex flex-col gap-1.5">
+          <label
+            for="bookmark-url"
+            class="text-[10px] tracking-wider uppercase text-muted-foreground"
+            style="font-family: 'JetBrains Mono', monospace"
+          >
+            URL
+          </label>
+          <input
+            id="bookmark-url"
+            type="text"
+            formControlName="url"
+            placeholder="https://example.com"
+            class="w-full px-3 py-2 text-sm bg-muted/40 border border-border rounded-sm focus:outline-none focus:ring-1 focus:ring-ring text-foreground placeholder:text-muted-foreground/60 transition-colors"
+          />
+          @if (
+            bookmarkForm.controls.url.touched && bookmarkForm.controls.url.hasError('required')
+          ) {
+            <span class="text-xs text-destructive"> URL is required. </span>
+          }
+        </div>
+        <div class="flex flex-col gap-1.5">
+          <label
+            for="bookmark-description"
+            class="text-[10px] tracking-wider uppercase text-muted-foreground"
+            style="font-family: 'JetBrains Mono', monospace"
+          >
+            Description
+          </label>
+          <textarea
+            id="bookmark-description"
+            formControlName="description"
+            placeholder="Optional note..."
+            class="w-full px-3 py-2 text-sm bg-muted/40 border border-border rounded-sm focus:outline-none focus:ring-1 focus:ring-ring text-foreground placeholder:text-muted-foreground/60 transition-colors"
+          ></textarea>
+        </div>
+        <div class="flex flex-col gap-1.5">
+          <label
+            class="text-[10px] tracking-wider uppercase text-muted-foreground"
+            style="font-family: 'JetBrains Mono', monospace"
+          >
+            Folder
+          </label>
+          <ng-select
+            [items]="folders()"
+            bindLabel="title"
+            bindValue="id"
+            formControlName="folderId"
+            [clearable]="true"
+            placeholder="Select a folder"
+            class="custom-ng-select"
+          >
+            <ng-template ng-option-tmp let-item="item">
+              <div class="flex items-center gap-2">
+                <span
+                  class="w-2.5 h-2.5 rounded-full shrink-0"
+                  [style.background-color]="item.color || '#3B82F6'"
+                ></span>
+                <span class="truncate">{{ item.title }}</span>
+              </div>
+            </ng-template>
+            <ng-template ng-label-tmp let-item="item">
+              <div class="flex items-center gap-2">
+                <span
+                  class="w-2.5 h-2.5 rounded-full shrink-0"
+                  [style.background-color]="item.color || '#3B82F6'"
+                ></span>
+                <span class="truncate">{{ item.title }}</span>
+              </div>
+            </ng-template>
+          </ng-select>
+        </div>
+        <div class="flex flex-col gap-1.5">
+          <label
+            class="text-[10px] tracking-wider uppercase text-muted-foreground"
+            style="font-family: 'JetBrains Mono', monospace"
+          >
+            Tags
+          </label>
+          <ng-select
+            [items]="tags()"
+            [multiple]="true"
+            [closeOnSelect]="false"
+            bindLabel="title"
+            bindValue="id"
+            formControlName="tagIds"
+            placeholder="Select tags"
+            class="custom-ng-select"
+          >
+            <ng-template ng-option-tmp let-item="item" let-item$="item$">
+              <div class="flex items-center justify-between w-full">
+                <span>#{{ item.title }}</span>
+                @if (item$.selected) {
+                  <span class="text-xs font-semibold text-primary">✓</span>
+                }
+              </div>
+            </ng-template>
+            <ng-template ng-label-tmp let-item="item" let-clear="clear">
+              <span
+                class="inline-flex items-center gap-1 px-1.5 py-0.5 rounded text-xs bg-muted text-foreground mr-1 my-0.5 border border-border"
+              >
+                <span>#{{ item.title }}</span>
+                <span (click)="clear(item)" class="cursor-pointer hover:text-destructive text-muted-foreground hover:text-foreground text-sm leading-none">&times;</span>
+              </span>
+            </ng-template>
+          </ng-select>
+        </div>
+        <div class="flex items-center gap-6 pt-2">
+          <label class="flex items-center gap-2 text-sm cursor-pointer select-none">
+            <input
+              type="checkbox"
+              formControlName="isStarred"
+              class="w-4 h-4 rounded border-border text-primary focus:ring-ring"
+            />
+            <span>Star bookmark</span>
+          </label>
+          <label class="flex items-center gap-2 text-sm cursor-pointer select-none">
+            <input
+              type="checkbox"
+              formControlName="isReadLater"
+              class="w-4 h-4 rounded border-border text-primary focus:ring-ring"
+            />
+            <span>Read later</span>
+          </label>
+        </div>
+        @if (serverError()) {
+          <div class="text-xs text-destructive">
+            {{ serverError() }}
+          </div>
+        }
+        <div class="flex items-center justify-end gap-3 pt-3 mt-1">
+          <button
+            type="button"
+            (click)="onClose()"
+            class="px-3 py-1.5 text-xs font-medium text-muted-foreground hover:text-foreground hover:bg-muted rounded-sm transition-colors cursor-pointer"
+          >
+            Cancel
+          </button>
+          <button
+            type="submit"
+            [disabled]="bookmarkForm.invalid || isSubmitting()"
+            class="px-4 py-1.5 text-xs font-medium bg-primary text-primary-foreground rounded-sm hover:opacity-90 disabled:opacity-50 transition-opacity cursor-pointer shadow-xs"
+          >
+            @if (isSubmitting()) {
+              Adding...
+            } @else {
+              Save
+            }
+          </button>
+        </div>
+      </form>
+    </div>
+  </div>
+}

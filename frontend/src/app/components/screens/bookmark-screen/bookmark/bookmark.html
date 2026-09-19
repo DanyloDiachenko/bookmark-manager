@@ -11,7 +11,7 @@
       /><span
         class="text-[11px] text-muted-foreground truncate"
         style="font-family: 'JetBrains Mono', monospace"
-        >refactoringui.com</span
+        >{{ bookmark().url }}</span
       >
     </div>
     <div
@@ -19,14 +19,17 @@
     >
       <button
         aria-label="Favourite bookmark"
-        class="p-1 rounded-sm hover:bg-accent transition-colors text-amber-500 text-amber-500"
+        class="p-1 rounded-sm hover:bg-accent transition-colors"
+        [class.text-amber-500]="bookmark().isStarred"
+        [class.text-muted-foreground]="!bookmark().isStarred"
+        (click)="toggleStarred(bookmark().id)"
       >
         <svg
           xmlns="http://www.w3.org/2000/svg"
           width="24"
           height="24"
           viewBox="0 0 24 24"
-          fill="currentColor"
+          [attr.fill]="bookmark().isStarred ? 'currentColor' : 'none'"
           stroke="currentColor"
           stroke-width="2"
           stroke-linecap="round"
@@ -40,7 +43,10 @@
         </svg></button
       ><button
         aria-label="Read later"
-        class="p-1 rounded-sm hover:bg-accent transition-colors text-muted-foreground hover:text-foreground text-blue-500"
+        class="p-1 rounded-sm hover:bg-accent transition-colors"
+        [class.text-blue-500]="bookmark().isReadLater"
+        [class.text-muted-foreground]="!bookmark().isReadLater"
+        (click)="toggleReadLater(bookmark().id)"
       >
         <svg
           xmlns="http://www.w3.org/2000/svg"
@@ -59,7 +65,7 @@
           <polyline points="12 6 12 12 16 14"></polyline>
         </svg></button
       ><a
-        href="https://refactoringui.com"
+        [href]="bookmark().url"
         target="_blank"
         rel="noreferrer"
         aria-label="Open bookmark in new tab"
@@ -83,6 +89,7 @@
       ><button
         aria-label="Delete bookmark"
         class="p-1 rounded-sm hover:bg-accent transition-colors text-muted-foreground hover:text-foreground hover:text-destructive"
+        (click)="deleteBookmark(bookmark().id)"
       >
         <svg
           xmlns="http://www.w3.org/2000/svg"
@@ -107,24 +114,28 @@
     </div>
   </div>
   <div bis_skin_checked="1">
-    <h3 class="text-sm font-semibold text-foreground leading-snug line-clamp-2">Refactoring UI</h3>
+    <h3 class="text-sm font-semibold text-foreground leading-snug line-clamp-2">
+      {{ bookmark().title }}
+    </h3>
     <p class="text-xs text-muted-foreground mt-1 leading-relaxed line-clamp-2">
-      Make your software look better with practical UI design techniques.
+      {{ bookmark().description }}
     </p>
   </div>
   <div class="flex items-center gap-1 flex-wrap mt-auto" bis_skin_checked="1">
-    <span
-      class="text-[10px] px-1.5 py-0.5 bg-muted text-muted-foreground rounded-sm"
-      style="font-family: 'JetBrains Mono', monospace"
-      >design</span
-    ><span
-      class="text-[10px] px-1.5 py-0.5 bg-muted text-muted-foreground rounded-sm"
-      style="font-family: 'JetBrains Mono', monospace"
-      >ui</span
-    ><span
-      class="ml-auto text-[10px] font-medium"
-      style="color: rgb(239, 68, 68); font-family: 'JetBrains Mono', monospace"
-      >Design</span
-    >
+    @for (tag of bookmark().tags; track tag.id) {
+      <span
+        class="text-[10px] px-1.5 py-0.5 bg-muted text-muted-foreground rounded-sm"
+        style="font-family: 'JetBrains Mono', monospace"
+        >{{ tag.title }}</span
+      >
+    }
+    @if (bookmark().folder; as folder) {
+      <span
+        class="ml-auto text-[10px] font-medium"
+        [style.color]="folder.color"
+        style="font-family: 'JetBrains Mono', monospace"
+        >{{ folder.title }}</span
+      >
+    }
   </div>
 </div>

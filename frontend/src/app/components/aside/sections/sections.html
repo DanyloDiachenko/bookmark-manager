@@ -21,7 +21,7 @@
       <path d="M15 3v18"></path></svg
     ><span>All</span
     ><span class="ml-auto text-xs opacity-50" style="font-family: 'JetBrains Mono', monospace"
-      >12</span
+      >{{ allBookmarkCount() }}</span
     ></button
   ><button
     class="w-full flex items-center gap-2.5 px-2.5 py-1.5 rounded-sm text-sm transition-colors text-left text-muted-foreground hover:text-foreground hover:bg-accent"
@@ -43,7 +43,7 @@
       ></path></svg
     ><span>Starred</span
     ><span class="ml-auto text-xs opacity-50" style="font-family: 'JetBrains Mono', monospace"
-      >4</span
+      >{{ starredBookmarkCount() }}</span
     ></button
   ><button
     class="w-full flex items-center gap-2.5 px-2.5 py-1.5 rounded-sm text-sm transition-colors text-left text-muted-foreground hover:text-foreground hover:bg-accent"
@@ -64,7 +64,7 @@
       <polyline points="12 6 12 12 16 14"></polyline></svg
     ><span>Read Later</span
     ><span class="ml-auto text-xs opacity-50" style="font-family: 'JetBrains Mono', monospace"
-      >3</span
+      >{{ readLaterBookmarkCount() }}</span
     >
   </button>
 </div>

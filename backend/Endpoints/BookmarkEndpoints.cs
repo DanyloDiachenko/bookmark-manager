@@ -209,41 +209,12 @@ public static class BookmarkEndpoints
             }
 
             var tagsList = new List<Tag>();
-            if (request.Tags != null && request.Tags.Count > 0)
+            if (request.TagIds != null && request.TagIds.Count > 0)
             {
-                foreach (var tagItem in request.Tags.Distinct(StringComparer.OrdinalIgnoreCase))
-                {
-                    if (string.IsNullOrWhiteSpace(tagItem))
-                    {
-                        continue;
-                    }
-
-                    var tagTrimmed = tagItem.Trim();
-                    Tag? tagEntity = null;
-
-                    if (Guid.TryParse(tagTrimmed, out var parsedTagGuid))
-                    {
-                        tagEntity = await db.Tags.FirstOrDefaultAsync(t => t.Id == parsedTagGuid && t.UserId == userId);
-                    }
-
-                    if (tagEntity == null)
-                    {
-                        var tagLower = tagTrimmed.ToLower();
-                        tagEntity = await db.Tags.FirstOrDefaultAsync(t => t.UserId == userId && t.Title.ToLower() == tagLower);
-                    }
-
-                    if (tagEntity == null)
-                    {
-                        tagEntity = new Tag
-                        {
-                            UserId = userId,
-                            Title = tagTrimmed.ToLower()
-                        };
-                        db.Tags.Add(tagEntity);
-                    }
-
-                    tagsList.Add(tagEntity);
-                }
+                var distinctTagIds = request.TagIds.Distinct().ToList();
+                tagsList = await db.Tags
+                    .Where(t => t.UserId == userId && distinctTagIds.Contains(t.Id))
+                    .ToListAsync();
             }
 
             var bookmark = new Bookmark
@@ -276,6 +247,131 @@ public static class BookmarkEndpoints
             );
 
             return Results.Created($"/api/bookmarks/{bookmark.Id}", response);
+        });
+
+        group.MapPut("/{id:guid}", async (
+            Guid id,
+            UpdateBookmarkRequest request,
+            IValidator<UpdateBookmarkRequest> validator,
+            ClaimsPrincipal userClaims,
+            AppDbContext db,
+            IWebMetadataService metadataService
+        ) =>
+        {
+            var validationResult = await validator.ValidateAsync(request);
+            if (!validationResult.IsValid)
+            {
+                return Results.ValidationProblem(validationResult.ToDictionary());
+            }
+
+            var userId = userClaims.GetUserId();
+
+            var bookmark = await db.Bookmarks
+                .Include(b => b.Folder)
+                .Include(b => b.Tags)
+                .FirstOrDefaultAsync(b => b.Id == id && b.UserId == userId);
+
+            if (bookmark == null)
+            {
+                return Results.NotFound(new { message = "Bookmark was not found" });
+            }
+
+            if (request.Url != null)
+            {
+                var newUrl = request.Url.Trim();
+                if (!string.Equals(bookmark.Url, newUrl, StringComparison.OrdinalIgnoreCase))
+                {
+                    bookmark.Url = newUrl;
+                    var metadata = await metadataService.ExtractMetadataAsync(newUrl);
+                    if (!string.IsNullOrWhiteSpace(metadata.ImageUrl))
+                    {
+                        bookmark.ImageUrl = metadata.ImageUrl;
+                    }
+                    if (string.IsNullOrWhiteSpace(request.Title) && !string.IsNullOrWhiteSpace(metadata.Title))
+                    {
+                        bookmark.Title = metadata.Title.Length > 150 ? metadata.Title[..150] : metadata.Title;
+                    }
+                    if (request.Description == null && !string.IsNullOrWhiteSpace(metadata.Description))
+                    {
+                        bookmark.Description = metadata.Description;
+                    }
+                }
+            }
+
+            if (request.Title != null)
+            {
+                var trimmedTitle = request.Title.Trim();
+                bookmark.Title = trimmedTitle.Length > 150 ? trimmedTitle[..150] : trimmedTitle;
+            }
+
+            if (request.Description != null)
+            {
+                bookmark.Description = string.IsNullOrWhiteSpace(request.Description) ? null : request.Description.Trim();
+            }
+
+            if (request.IsStarred.HasValue)
+            {
+                bookmark.IsStarred = request.IsStarred.Value;
+            }
+
+            if (request.IsReadLater.HasValue)
+            {
+                bookmark.ToRead = request.IsReadLater.Value;
+            }
+
+            if (request.FolderId.HasValue)
+            {
+                if (request.FolderId.Value == Guid.Empty)
+                {
+                    bookmark.FolderId = null;
+                    bookmark.Folder = null;
+                }
+                else
+                {
+                    var folder = await db.Folders.FirstOrDefaultAsync(f => f.Id == request.FolderId.Value && f.UserId == userId);
+                    if (folder == null)
+                    {
+                        return Results.BadRequest(new { message = "Folder not found" });
+                    }
+                    bookmark.FolderId = folder.Id;
+                    bookmark.Folder = folder;
+                }
+            }
+
+            if (request.TagIds != null)
+            {
+                var distinctTagIds = request.TagIds.Distinct().ToList();
+                var newTags = await db.Tags
+                    .Where(t => t.UserId == userId && distinctTagIds.Contains(t.Id))
+                    .ToListAsync();
+
+                bookmark.Tags.Clear();
+                foreach (var tag in newTags)
+                {
+                    bookmark.Tags.Add(tag);
+                }
+            }
+
+            await db.SaveChangesAsync();
+
+            var folderBookmarksCount = bookmark.FolderId.HasValue
+                ? await db.Bookmarks.CountAsync(b => b.FolderId == bookmark.FolderId.Value)
+                : 0;
+
+            var response = new BookmarkResponse(
+                bookmark.Id,
+                bookmark.Url,
+                bookmark.Title,
+                bookmark.Description,
+                bookmark.ImageUrl,
+                bookmark.CreatedAt,
+                bookmark.IsStarred,
+                bookmark.ToRead,
+                bookmark.Folder != null ? new FolderResponse(bookmark.Folder.Id, bookmark.Folder.Title, bookmark.Folder.Color, folderBookmarksCount) : null,
+                bookmark.Tags.Select(t => new TagResponse(t.Id, t.Title)).ToList()
+            );
+
+            return Results.Ok(response);
         });
 
         group.MapDelete("/{id:guid}", async (Guid id, ClaimsPrincipal userClaims, AppDbContext db) =>

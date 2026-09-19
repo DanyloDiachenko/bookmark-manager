@@ -6,9 +6,19 @@ public record CreateBookmarkRequest(
     string? Description = null,
     Guid? FolderId = null,
     string? Folder = null,
-    List<string>? Tags = null,
+    List<Guid>? TagIds = null,
     bool? IsStarred = false,
     bool? IsReadLater = false
+);
+
+public record UpdateBookmarkRequest(
+    string? Url = null,
+    string? Title = null,
+    string? Description = null,
+    Guid? FolderId = null,
+    List<Guid>? TagIds = null,
+    bool? IsStarred = null,
+    bool? IsReadLater = null
 );
 
 public record BookmarkResponse(

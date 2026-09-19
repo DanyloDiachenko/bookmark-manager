@@ -1,4 +1,5 @@
-import { Component } from '@angular/core';
+import { Component, inject } from '@angular/core';
+import { BookmarksService } from '../../screens/bookmark-screen/bookmarks.service';
 
 @Component({
   selector: 'app-sections',
@@ -6,4 +7,9 @@ import { Component } from '@angular/core';
   templateUrl: './sections.html',
   styleUrl: './sections.css',
 })
-export class Sections {}
+export class Sections {
+  readonly bookmarkService = inject(BookmarksService);
+  readonly allBookmarkCount = this.bookmarkService.allBookmarkCount;
+  readonly starredBookmarkCount = this.bookmarkService.starredCount;
+  readonly readLaterBookmarkCount = this.bookmarkService.realLaterCount;
+}

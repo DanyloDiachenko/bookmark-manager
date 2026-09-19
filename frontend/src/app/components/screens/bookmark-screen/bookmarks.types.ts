@@ -5,8 +5,8 @@ export interface IBookmark {
   id: string;
   url: string;
   title: string;
-  description: string | null;
-  imageUrl: string | null;
+  description?: string | null;
+  imageUrl?: string | null;
   createdAt: string;
   isStarred: boolean;
   isReadLater: boolean;
@@ -19,11 +19,12 @@ export interface CreateBookmarkRequest {
   title?: string;
   description?: string;
   folderId?: string;
-  folder?: string;
-  tags?: string[];
+  tagIds?: string[];
   isStarred?: boolean;
   isReadLater?: boolean;
 }
+
+export interface UpdateBookmarkRequest extends Partial<CreateBookmarkRequest> {}
 
 export interface BookmarkFilterParams {
   isStarred?: boolean;
