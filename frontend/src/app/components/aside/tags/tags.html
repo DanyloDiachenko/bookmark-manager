@@ -1,101 +1,71 @@
 <div bis_skin_checked="1">
-  <p
-    class="px-2.5 mb-2 text-[10px] font-semibold text-muted-foreground uppercase tracking-widest"
-    style="font-family: 'JetBrains Mono', monospace"
-  >
-    Tags
-  </p>
-  <div class="flex flex-wrap gap-1 px-2" bis_skin_checked="1">
+  <div class="flex justify-between items-center">
+    <p
+      class="px-2.5 text-[10px] font-semibold text-muted-foreground uppercase tracking-widest"
+      style="font-family: 'JetBrains Mono', monospace"
+    >
+      Tags
+    </p>
     <button
-      class="text-[11px] px-2 py-0.5 rounded-full border transition-colors border-border text-muted-foreground hover:text-foreground hover:border-foreground"
-      style="font-family: 'JetBrains Mono', monospace"
+      class="flex items-center gap-1.5 px-1 py-1 bg-primary text-primary-foreground text-sm rounded-sm hover:opacity-90 transition-opacity cursor-pointer"
+      (click)="openCreateTagModal()"
     >
-      api</button
-    ><button
-      class="text-[11px] px-2 py-0.5 rounded-full border transition-colors border-border text-muted-foreground hover:text-foreground hover:border-foreground"
-      style="font-family: 'JetBrains Mono', monospace"
-    >
-      css</button
-    ><button
-      class="text-[11px] px-2 py-0.5 rounded-full border transition-colors border-border text-muted-foreground hover:text-foreground hover:border-foreground"
-      style="font-family: 'JetBrains Mono', monospace"
-    >
-      design</button
-    ><button
-      class="text-[11px] px-2 py-0.5 rounded-full border transition-colors border-border text-muted-foreground hover:text-foreground hover:border-foreground"
-      style="font-family: 'JetBrains Mono', monospace"
-    >
-      devops</button
-    ><button
-      class="text-[11px] px-2 py-0.5 rounded-full border transition-colors border-border text-muted-foreground hover:text-foreground hover:border-foreground"
-      style="font-family: 'JetBrains Mono', monospace"
-    >
-      framework</button
-    ><button
-      class="text-[11px] px-2 py-0.5 rounded-full border transition-colors border-border text-muted-foreground hover:text-foreground hover:border-foreground"
-      style="font-family: 'JetBrains Mono', monospace"
-    >
-      hosting</button
-    ><button
-      class="text-[11px] px-2 py-0.5 rounded-full border transition-colors border-border text-muted-foreground hover:text-foreground hover:border-foreground"
-      style="font-family: 'JetBrains Mono', monospace"
-    >
-      inspiration</button
-    ><button
-      class="text-[11px] px-2 py-0.5 rounded-full border transition-colors border-border text-muted-foreground hover:text-foreground hover:border-foreground"
-      style="font-family: 'JetBrains Mono', monospace"
-    >
-      javascript</button
-    ><button
-      class="text-[11px] px-2 py-0.5 rounded-full border transition-colors border-border text-muted-foreground hover:text-foreground hover:border-foreground"
-      style="font-family: 'JetBrains Mono', monospace"
-    >
-      knowledge</button
-    ><button
-      class="text-[11px] px-2 py-0.5 rounded-full border transition-colors border-border text-muted-foreground hover:text-foreground hover:border-foreground"
-      style="font-family: 'JetBrains Mono', monospace"
-    >
-      news</button
-    ><button
-      class="text-[11px] px-2 py-0.5 rounded-full border transition-colors border-border text-muted-foreground hover:text-foreground hover:border-foreground"
-      style="font-family: 'JetBrains Mono', monospace"
-    >
-      payments</button
-    ><button
-      class="text-[11px] px-2 py-0.5 rounded-full border transition-colors border-border text-muted-foreground hover:text-foreground hover:border-foreground"
-      style="font-family: 'JetBrains Mono', monospace"
-    >
-      productivity</button
-    ><button
-      class="text-[11px] px-2 py-0.5 rounded-full border transition-colors border-border text-muted-foreground hover:text-foreground hover:border-foreground"
-      style="font-family: 'JetBrains Mono', monospace"
-    >
-      react</button
-    ><button
-      class="text-[11px] px-2 py-0.5 rounded-full border transition-colors border-border text-muted-foreground hover:text-foreground hover:border-foreground"
-      style="font-family: 'JetBrains Mono', monospace"
-    >
-      reference</button
-    ><button
-      class="text-[11px] px-2 py-0.5 rounded-full border transition-colors border-border text-muted-foreground hover:text-foreground hover:border-foreground"
-      style="font-family: 'JetBrains Mono', monospace"
-    >
-      tech</button
-    ><button
-      class="text-[11px] px-2 py-0.5 rounded-full border transition-colors border-border text-muted-foreground hover:text-foreground hover:border-foreground"
-      style="font-family: 'JetBrains Mono', monospace"
-    >
-      tools</button
-    ><button
-      class="text-[11px] px-2 py-0.5 rounded-full border transition-colors border-border text-muted-foreground hover:text-foreground hover:border-foreground"
-      style="font-family: 'JetBrains Mono', monospace"
-    >
-      typography</button
-    ><button
-      class="text-[11px] px-2 py-0.5 rounded-full border transition-colors border-border text-muted-foreground hover:text-foreground hover:border-foreground"
-      style="font-family: 'JetBrains Mono', monospace"
-    >
-      ui
+      <svg
+        xmlns="http://www.w3.org/2000/svg"
+        width="24"
+        height="24"
+        viewBox="0 0 24 24"
+        fill="none"
+        stroke="currentColor"
+        stroke-width="2"
+        stroke-linecap="round"
+        stroke-linejoin="round"
+        class="lucide lucide-plus w-3.5 h-3.5"
+      >
+        <path d="M5 12h14"></path>
+        <path d="M12 5v14"></path>
+      </svg>
     </button>
   </div>
+  <div class="flex flex-wrap gap-1 px-2 mt-2" bis_skin_checked="1">
+    @if (tags().length > 0) {
+      @for (tag of tags(); track tag.id) {
+        <button
+          class="text-[11px] px-2 py-0.5 rounded-full border transition-colors border-border text-muted-foreground hover:text-foreground hover:border-foreground flex items-center justify-between gap-2"
+          style="font-family: 'JetBrains Mono', monospace"
+        >
+          {{ tag.title }}
+          <button class="cursor-pointer leading-0" (click)="deleteTag(tag.id)">
+            <svg
+              xmlns="http://www.w3.org/2000/svg"
+              width="24"
+              height="24"
+              viewBox="0 0 24 24"
+              fill="none"
+              stroke="currentColor"
+              stroke-width="2"
+              stroke-linecap="round"
+              stroke-linejoin="round"
+              class="lucide lucide-x w-3 h-3"
+            >
+              <path d="M18 6L6 18"></path>
+              <path d="M6 6l12 12"></path>
+            </svg>
+          </button>
+        </button>
+      }
+    } @else {
+      @if (isLoading()) {
+        <p class="text-xs text-muted-foreground mx-1">Loading...</p>
+      } @else {
+        <p class="text-xs text-muted-foreground mx-1">No tags found</p>
+      }
+    }
+  </div>
 </div>
+
+<app-create-tag-modal
+  [isOpen]="isCreateTagModalOpened()"
+  (close)="closeCreateTagModal()"
+  (createTag)="createTag($event)"
+/>
