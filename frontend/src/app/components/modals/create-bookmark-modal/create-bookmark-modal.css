@@ -1,0 +1,86 @@
+.custom-ng-select {
+  display: block;
+  width: 100%;
+}
+
+:host ::ng-deep .custom-ng-select .ng-select-container {
+  border-radius: 0.125rem !important;
+  border: 1px solid var(--border) !important;
+  background-color: var(--muted) !important;
+  background-color: color-mix(in srgb, var(--muted) 40%, transparent) !important;
+  min-height: 38px !important;
+  padding: 2px !important;
+  font-size: 0.875rem !important;
+  color: var(--foreground) !important;
+  transition:
+    border-color 0.15s ease-in-out,
+    box-shadow 0.15s ease-in-out !important;
+  box-shadow: none !important;
+}
+
+:host ::ng-deep .custom-ng-select.ng-select-focused:not(.ng-select-opened) > .ng-select-container,
+:host ::ng-deep .custom-ng-select.ng-select-opened > .ng-select-container {
+  border-color: var(--ring) !important;
+  box-shadow: 0 0 0 1px var(--ring) !important;
+}
+
+:host ::ng-deep .custom-ng-select .ng-placeholder {
+  color: color-mix(in srgb, var(--muted-foreground) 60%, transparent) !important;
+  font-size: 0.875rem !important;
+  padding-left: 4px !important;
+}
+
+:host ::ng-deep .custom-ng-select .ng-value {
+  color: var(--foreground) !important;
+}
+
+:host ::ng-deep .custom-ng-select .ng-arrow-wrapper {
+  padding-right: 6px !important;
+}
+
+:host ::ng-deep .custom-ng-select .ng-arrow-wrapper .ng-arrow {
+  border-color: var(--muted-foreground) transparent transparent !important;
+  border-width: 4px 4px 0 !important;
+}
+
+:host ::ng-deep .custom-ng-select.ng-select-opened .ng-arrow-wrapper .ng-arrow {
+  border-color: transparent transparent var(--muted-foreground) !important;
+  border-width: 0 4px 4px !important;
+}
+
+:host ::ng-deep .custom-ng-select .ng-dropdown-panel {
+  border-radius: 0.25rem !important;
+  border: 1px solid var(--border) !important;
+  background-color: var(--card) !important;
+  color: var(--card-foreground) !important;
+  box-shadow:
+    0 10px 25px -5px rgba(0, 0, 0, 0.15),
+    0 8px 10px -6px rgba(0, 0, 0, 0.1) !important;
+  font-size: 0.875rem !important;
+  z-index: 60 !important;
+}
+
+:host ::ng-deep .custom-ng-select .ng-dropdown-panel .ng-dropdown-panel-items .ng-option {
+  background-color: var(--card) !important;
+  color: var(--card-foreground) !important;
+  padding: 8px 12px !important;
+  font-size: 0.875rem !important;
+}
+
+:host
+  ::ng-deep
+  .custom-ng-select
+  .ng-dropdown-panel
+  .ng-dropdown-panel-items
+  .ng-option.ng-option-marked {
+  background-color: var(--accent) !important;
+}
+
+:host
+  ::ng-deep
+  .custom-ng-select
+  .ng-dropdown-panel
+  .ng-dropdown-panel-items
+  .ng-option.ng-option-selected {
+  font-weight: 500 !important;
+}

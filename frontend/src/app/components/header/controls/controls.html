@@ -46,7 +46,8 @@
   </div>
   <button
     class="flex items-center gap-1.5 px-3 py-1.5 bg-primary text-primary-foreground text-sm rounded-sm hover:opacity-90 transition-opacity"
-  >
+    (click)="openCreateBookmarkModal()"
+    >
     <svg
       xmlns="http://www.w3.org/2000/svg"
       width="24"
@@ -64,3 +65,9 @@
     >Add
   </button>
 </div>
+
+<app-create-bookmark-modal
+  [isOpen]="isCreateBookmarkModalOpened()"
+  (close)="closeCreateBookmarkModal()"
+  (createBookmark)="createBookmark($event)"
+/>

@@ -209,41 +209,12 @@ public static class BookmarkEndpoints
             }
 
             var tagsList = new List<Tag>();
-            if (request.Tags != null && request.Tags.Count > 0)
+            if (request.TagIds != null && request.TagIds.Count > 0)
             {
-                foreach (var tagItem in request.Tags.Distinct(StringComparer.OrdinalIgnoreCase))
-                {
-                    if (string.IsNullOrWhiteSpace(tagItem))
-                    {
-                        continue;
-                    }
-
-                    var tagTrimmed = tagItem.Trim();
-                    Tag? tagEntity = null;
-
-                    if (Guid.TryParse(tagTrimmed, out var parsedTagGuid))
-                    {
-                        tagEntity = await db.Tags.FirstOrDefaultAsync(t => t.Id == parsedTagGuid && t.UserId == userId);
-                    }
-
-                    if (tagEntity == null)
-                    {
-                        var tagLower = tagTrimmed.ToLower();
-                        tagEntity = await db.Tags.FirstOrDefaultAsync(t => t.UserId == userId && t.Title.ToLower() == tagLower);
-                    }
-
-                    if (tagEntity == null)
-                    {
-                        tagEntity = new Tag
-                        {
-                            UserId = userId,
-                            Title = tagTrimmed.ToLower()
-                        };
-                        db.Tags.Add(tagEntity);
-                    }
-
-                    tagsList.Add(tagEntity);
-                }
+                var distinctTagIds = request.TagIds.Distinct().ToList();
+                tagsList = await db.Tags
+                    .Where(t => t.UserId == userId && distinctTagIds.Contains(t.Id))
+                    .ToListAsync();
             }
 
             var bookmark = new Bookmark

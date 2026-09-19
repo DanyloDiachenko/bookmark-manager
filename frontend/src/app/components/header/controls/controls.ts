@@ -1,10 +1,34 @@
-import { Component } from '@angular/core';
+import { Component, inject, signal } from '@angular/core';
+import { CreateBookmarkModal } from '../../modals/create-bookmark-modal/create-bookmark-modal';
+import { BookmarksService } from '../../screens/bookmark-screen/bookmarks.service';
+import { CreateBookmarkRequest } from '../../screens/bookmark-screen/bookmarks.types';
 
 @Component({
   selector: 'app-controls',
-  imports: [],
+  imports: [CreateBookmarkModal],
   templateUrl: './controls.html',
   styleUrl: './controls.css',
   host: { class: 'ml-auto' },
 })
-export class Controls {}
+export class Controls {
+  private readonly bookmarkService = inject(BookmarksService);
+  readonly isCreateBookmarkModalOpened = signal<boolean>(false);
+
+  public openCreateBookmarkModal() {
+    this.isCreateBookmarkModalOpened.set(true);
+  }
+
+  public closeCreateBookmarkModal() {
+    this.isCreateBookmarkModalOpened.set(false);
+  }
+
+  public isLoading() {
+    return this.bookmarkService.isLoading();
+  }
+
+  public createBookmark(data: CreateBookmarkRequest) {
+    this.bookmarkService.create(data).subscribe({
+      next: () => this.closeCreateBookmarkModal(),
+    });
+  }
+}
