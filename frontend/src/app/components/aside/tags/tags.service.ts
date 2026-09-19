@@ -22,14 +22,18 @@ export class TagsService {
   }
 
   public create(payload: CreateTagRequest): Observable<ITag> {
-    return this.http
-      .post<ITag>('/api/tags', payload)
-      .pipe(tap((tag) => this.tagsSignal.update((tags) => [...tags, tag])));
+    this.isLoadingSignal.set(true);
+    return this.http.post<ITag>('/api/tags', payload).pipe(
+      tap((tag) => this.tagsSignal.update((tags) => [...tags, tag])),
+      finalize(() => this.isLoadingSignal.set(false)),
+    );
   }
 
   public delete(id: string): Observable<void> {
-    return this.http
-      .delete<void>(`/api/tags/${id}`)
-      .pipe(tap(() => this.tagsSignal.update((tags) => tags.filter((t) => t.id !== id))));
+    this.isLoadingSignal.set(true);
+    return this.http.delete<void>(`/api/tags/${id}`).pipe(
+      tap(() => this.tagsSignal.update((tags) => tags.filter((t) => t.id !== id))),
+      finalize(() => this.isLoadingSignal.set(false)),
+    );
   }
 }

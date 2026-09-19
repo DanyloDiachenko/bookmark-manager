@@ -55,7 +55,11 @@
         </button>
       }
     } @else {
-      <p class="text-xs text-muted-foreground mx-1">No tags found</p>
+      @if (isLoading()) {
+        <p class="text-xs text-muted-foreground mx-1">Loading...</p>
+      } @else {
+        <p class="text-xs text-muted-foreground mx-1">No tags found</p>
+      }
     }
   </div>
 </div>

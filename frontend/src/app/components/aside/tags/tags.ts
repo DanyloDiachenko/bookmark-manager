@@ -1,6 +1,7 @@
 import { Component, inject, OnInit, signal } from '@angular/core';
 import { TagsService } from './tags.service';
 import { CreateTagModal } from '../../modals/create-tag-modal/create-tag-modal';
+import { CreateTagRequest } from './tags.types';
 
 @Component({
   selector: 'app-tags',
@@ -17,6 +18,10 @@ export class Tags implements OnInit {
     this.tagsService.getAll().subscribe();
   }
 
+  public isLoading(): boolean {
+    return this.tagsService.isLoading();
+  }
+
   public openCreateTagModal() {
     this.isCreateTagModalOpened.set(true);
   }
@@ -25,8 +30,8 @@ export class Tags implements OnInit {
     this.isCreateTagModalOpened.set(false);
   }
 
-  public createTag(data: { title: string; color: string }) {
-    this.tagsService.create({ title: data.title }).subscribe({
+  public createTag(data: CreateTagRequest) {
+    this.tagsService.create(data).subscribe({
       next: () => this.closeCreateTagModal(),
     });
   }
