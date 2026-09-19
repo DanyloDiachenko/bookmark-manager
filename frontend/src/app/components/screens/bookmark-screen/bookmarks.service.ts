@@ -1,6 +1,6 @@
 import { HttpClient } from '@angular/common/http';
 import { computed, inject, Injectable, OnInit, signal } from '@angular/core';
-import { CreateBookmarkRequest, IBookmark } from './bookmarks.types';
+import { CreateBookmarkRequest, IBookmark, UpdateBookmarkRequest } from './bookmarks.types';
 import { finalize, Observable, tap } from 'rxjs';
 
 @Injectable({
@@ -43,6 +43,18 @@ export class BookmarksService {
     this.isLoadingSignal.set(true);
     return this.http.delete<void>(`/api/bookmarks/${id}`).pipe(
       tap(() => this.bookmarksSignal.update((bookmarks) => bookmarks.filter((b) => b.id !== id))),
+      finalize(() => this.isLoadingSignal.set(false)),
+    );
+  }
+
+  public update(id: string, data: UpdateBookmarkRequest): Observable<IBookmark> {
+    this.isLoadingSignal.set(true);
+    return this.http.put<IBookmark>(`/api/bookmarks/${id}`, data).pipe(
+      tap((updatedBookmark) =>
+        this.bookmarksSignal.update((bookmarks) =>
+          bookmarks.map((b) => (b.id === id ? updatedBookmark : b)),
+        ),
+      ),
       finalize(() => this.isLoadingSignal.set(false)),
     );
   }

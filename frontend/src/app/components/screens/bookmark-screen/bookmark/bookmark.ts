@@ -15,4 +15,20 @@ export class Bookmark {
   public deleteBookmark(id: string) {
     this.bookmarkService.delete(id).subscribe();
   }
+
+  public toggleStarred(bookmarkId: string) {
+    this.bookmarkService
+      .update(bookmarkId, {
+        isStarred: !this.bookmark().isStarred,
+      })
+      .subscribe();
+  }
+
+  public toggleReadLater(bookmarkId: string) {
+    this.bookmarkService
+      .update(bookmarkId, {
+        isReadLater: !this.bookmark().isReadLater,
+      })
+      .subscribe();
+  }
 }

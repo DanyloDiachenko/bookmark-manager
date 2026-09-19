@@ -11,6 +11,16 @@ public record CreateBookmarkRequest(
     bool? IsReadLater = false
 );
 
+public record UpdateBookmarkRequest(
+    string? Url = null,
+    string? Title = null,
+    string? Description = null,
+    Guid? FolderId = null,
+    List<Guid>? TagIds = null,
+    bool? IsStarred = null,
+    bool? IsReadLater = null
+);
+
 public record BookmarkResponse(
     Guid Id,
     string Url,

@@ -19,11 +19,12 @@ export interface CreateBookmarkRequest {
   title?: string;
   description?: string;
   folderId?: string;
-  folder?: string;
   tagIds?: string[];
   isStarred?: boolean;
   isReadLater?: boolean;
 }
+
+export interface UpdateBookmarkRequest extends Partial<CreateBookmarkRequest> {}
 
 export interface BookmarkFilterParams {
   isStarred?: boolean;

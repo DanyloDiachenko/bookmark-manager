@@ -19,14 +19,17 @@
     >
       <button
         aria-label="Favourite bookmark"
-        class="p-1 rounded-sm hover:bg-accent transition-colors text-amber-500 text-amber-500"
+        class="p-1 rounded-sm hover:bg-accent transition-colors"
+        [class.text-amber-500]="bookmark().isStarred"
+        [class.text-muted-foreground]="!bookmark().isStarred"
+        (click)="toggleStarred(bookmark().id)"
       >
         <svg
           xmlns="http://www.w3.org/2000/svg"
           width="24"
           height="24"
           viewBox="0 0 24 24"
-          fill="currentColor"
+          [attr.fill]="bookmark().isStarred ? 'currentColor' : 'none'"
           stroke="currentColor"
           stroke-width="2"
           stroke-linecap="round"
@@ -40,7 +43,10 @@
         </svg></button
       ><button
         aria-label="Read later"
-        class="p-1 rounded-sm hover:bg-accent transition-colors text-muted-foreground hover:text-foreground text-blue-500"
+        class="p-1 rounded-sm hover:bg-accent transition-colors"
+        [class.text-blue-500]="bookmark().isReadLater"
+        [class.text-muted-foreground]="!bookmark().isReadLater"
+        (click)="toggleReadLater(bookmark().id)"
       >
         <svg
           xmlns="http://www.w3.org/2000/svg"
