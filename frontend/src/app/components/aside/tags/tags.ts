@@ -1,8 +1,9 @@
-import { Component, inject, OnInit, signal } from '@angular/core';
+import { Component, computed, inject, OnInit, signal } from '@angular/core';
 import { TagsService } from './tags.service';
 import { CreateTagModal } from '../../modals/create-tag-modal/create-tag-modal';
 import { CreateTagRequest } from './tags.types';
 import { NgClass } from '@angular/common';
+import { BookmarkFiltersService } from '../../screens/bookmark-screen/bookmark-filters.service';
 
 @Component({
   selector: 'app-tags',
@@ -11,18 +12,18 @@ import { NgClass } from '@angular/common';
   styleUrl: './tags.css',
 })
 export class Tags implements OnInit {
-  readonly tagsService = inject(TagsService);
+  private readonly tagsService = inject(TagsService);
+  private readonly bookmarkFiltersService = inject(BookmarkFiltersService);
   readonly tags = this.tagsService.tags;
   readonly isCreateTagModalOpened = signal<boolean>(false);
-  private readonly currentTagIdSignal = signal<string | null>(null);
-  readonly currentTagId = this.currentTagIdSignal.asReadonly();
+  readonly currentTagId = computed(() => this.bookmarkFiltersService.state().tagId);
 
   ngOnInit() {
     this.tagsService.getAll().subscribe();
   }
 
   public changeCurrentTag(tagId: string) {
-    this.currentTagIdSignal.update((tId) => (tId === tagId ? null : tagId));
+    this.bookmarkFiltersService.toggleTag(tagId);
   }
 
   public isLoading(): boolean {

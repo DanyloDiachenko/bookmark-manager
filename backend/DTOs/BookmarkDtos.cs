@@ -33,3 +33,4 @@ public record BookmarkResponse(
     FolderResponse? Folder,
     List<TagResponse> Tags
 );
+

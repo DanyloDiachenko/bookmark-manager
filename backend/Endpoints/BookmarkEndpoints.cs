@@ -19,7 +19,6 @@ public static class BookmarkEndpoints
         group.MapGet("/", async (
             [FromQuery] bool? isStarred,
             [FromQuery] bool? isReadLater,
-            [FromQuery] bool? isRealLater,
             [FromQuery] string? folder,
             [FromQuery] Guid? folderId,
             [FromQuery] string? tag,
@@ -39,10 +38,9 @@ public static class BookmarkEndpoints
                 query = query.Where(b => b.IsStarred == isStarred.Value);
             }
 
-            var readLater = isReadLater ?? isRealLater;
-            if (readLater.HasValue)
+            if (isReadLater.HasValue)
             {
-                query = query.Where(b => b.ToRead == readLater.Value);
+                query = query.Where(b => b.ToRead == isReadLater.Value);
             }
 
             if (folderId.HasValue)

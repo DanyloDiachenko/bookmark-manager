@@ -1,8 +1,9 @@
-import { Component, inject, OnInit, signal } from '@angular/core';
+import { Component, computed, inject, OnInit, signal } from '@angular/core';
 import { FoldersService } from './folders.service';
 import { CreateFolderRequest } from './folders.types';
 import { CreateFolderModal } from '../../modals/create-folder-modal/create-folder-modal';
 import { NgClass } from '@angular/common';
+import { BookmarkFiltersService } from '../../screens/bookmark-screen/bookmark-filters.service';
 
 @Component({
   selector: 'app-folders',
@@ -11,18 +12,18 @@ import { NgClass } from '@angular/common';
   styleUrl: './folders.css',
 })
 export class Folders implements OnInit {
-  readonly foldersService = inject(FoldersService);
+  private readonly foldersService = inject(FoldersService);
+  private readonly bookmarkFiltersService = inject(BookmarkFiltersService);
   readonly folders = this.foldersService.folders;
   readonly isCreateFolderModalOpened = signal<boolean>(false);
-  private readonly currentFolderIdSignal = signal<string | null>(null);
-  readonly currentFolderId = this.currentFolderIdSignal.asReadonly();
+  readonly currentFolderId = computed(() => this.bookmarkFiltersService.state().folderId);
 
   ngOnInit() {
     this.foldersService.getAll().subscribe();
   }
 
   public changeFolder(folderId: string) {
-    this.currentFolderIdSignal.update((fId) => (fId === folderId ? null : folderId));
+    this.bookmarkFiltersService.toggleFolder(folderId);
   }
 
   public isLoading(): boolean {

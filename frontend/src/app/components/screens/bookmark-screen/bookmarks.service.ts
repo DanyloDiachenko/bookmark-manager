@@ -1,7 +1,14 @@
-import { HttpClient } from '@angular/common/http';
-import { computed, inject, Injectable, OnInit, signal } from '@angular/core';
-import { CreateBookmarkRequest, IBookmark, UpdateBookmarkRequest } from './bookmarks.types';
-import { finalize, Observable, tap } from 'rxjs';
+import { HttpClient, HttpParams } from '@angular/common/http';
+import { computed, DestroyRef, inject, Injectable, signal } from '@angular/core';
+import {
+  BookmarkFilterParams,
+  CreateBookmarkRequest,
+  IBookmark,
+  UpdateBookmarkRequest,
+} from './bookmarks.types';
+import { catchError, finalize, Observable, of, switchMap, tap } from 'rxjs';
+import { BookmarkFilters, BookmarkFiltersService } from './bookmark-filters.service';
+import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 
 @Injectable({
   providedIn: 'root',
@@ -12,16 +19,50 @@ export class BookmarksService {
   readonly bookmarksSignal = signal<IBookmark[]>([]);
   readonly isLoading = this.isLoadingSignal.asReadonly();
   readonly bookmarks = this.bookmarksSignal.asReadonly();
-
+  readonly filters = inject(BookmarkFiltersService);
+  private readonly destroyRef = inject(DestroyRef);
   readonly allBookmarkCount = computed(() => this.bookmarksSignal().length);
-
   readonly starredCount = computed(
     () => this.bookmarksSignal().filter((b) => b.isStarred === true).length,
   );
-
   readonly realLaterCount = computed(
     () => this.bookmarksSignal().filter((b) => b.isReadLater === true).length,
   );
+
+  constructor() {
+    this.initFiltersPipeline();
+  }
+
+  private initFiltersPipeline() {
+    this.filters.filterChange$
+      .pipe(
+        tap(() => this.isLoadingSignal.set(true)),
+        switchMap((filtersState) =>
+          this.fetchBookmarks(filtersState).pipe(
+            catchError(() => of([])),
+            finalize(() => this.isLoadingSignal.set(false)),
+          ),
+        ),
+        takeUntilDestroyed(this.destroyRef),
+      )
+      .subscribe({
+        next: (bookmarks) => {
+          this.bookmarksSignal.set(bookmarks);
+        },
+      });
+  }
+
+  private fetchBookmarks(filters: BookmarkFilters) {
+    let params = new HttpParams();
+
+    if (filters.search) params = params.set('search', filters.search);
+    if (filters.section === 'starred') params = params.set('isStarred', 'true');
+    if (filters.section === 'readLater') params = params.set('isReadLater', 'true');
+    if (filters.folderId) params = params.set('folderId', filters.folderId);
+    if (filters.tagId) params = params.set('tagId', filters.tagId);
+
+    return this.http.get<IBookmark[]>(`/api/bookmarks`, { params });
+  }
 
   public getAll(): Observable<IBookmark[]> {
     this.isLoadingSignal.set(true);

@@ -11,6 +11,7 @@ import { BookmarksService } from './bookmarks.service';
 export class BookmarkScreen implements OnInit {
   private readonly bookmarkService = inject(BookmarksService);
   readonly bookmarks = this.bookmarkService.bookmarks;
+  readonly isLoading = this.bookmarkService.isLoading;
 
   ngOnInit() {
     this.bookmarkService.getAll().subscribe();
