@@ -25,7 +25,7 @@ import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 })
 export class BookmarksService {
   private readonly http = inject(HttpClient);
-  readonly isLoadingSignal = signal<boolean>(false);
+  readonly isLoadingSignal = signal<boolean>(true);
   readonly bookmarksSignal = signal<IBookmark[]>([]);
   readonly isLoading = this.isLoadingSignal.asReadonly();
   readonly bookmarks = this.bookmarksSignal.asReadonly();
