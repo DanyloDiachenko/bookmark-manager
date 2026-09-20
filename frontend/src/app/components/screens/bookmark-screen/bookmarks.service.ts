@@ -5,6 +5,7 @@ import {
   CreateBookmarkRequest,
   IBookmark,
   UpdateBookmarkRequest,
+  ViewMode,
 } from './bookmarks.types';
 import {
   catchError,
@@ -37,6 +38,13 @@ export class BookmarksService {
   readonly realLaterCount = computed(
     () => this.bookmarksSignal().filter((b) => b.isReadLater === true).length,
   );
+
+  private readonly viewModeSignal = signal<ViewMode>('grid');
+  readonly viewMode = this.viewModeSignal.asReadonly();
+
+  public setViewMode(mode: ViewMode): void {
+    this.viewModeSignal.set(mode);
+  }
 
   private readonly refetchTrigger$ = new BehaviorSubject<void>(undefined);
 

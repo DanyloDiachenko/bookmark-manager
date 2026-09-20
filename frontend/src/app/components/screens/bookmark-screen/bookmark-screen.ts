@@ -12,4 +12,5 @@ export class BookmarkScreen {
   private readonly bookmarkService = inject(BookmarksService);
   readonly bookmarks = this.bookmarkService.bookmarks;
   readonly isLoading = this.bookmarkService.isLoading;
+  readonly viewMode = this.bookmarkService.viewMode;
 }

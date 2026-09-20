@@ -36,3 +36,6 @@ export interface BookmarkFilterParams {
 
 export type BookmarkResponse = IBookmark;
 export type GetBookmarksResponse = IBookmark[];
+
+export type ViewMode = 'grid' | 'list';
+
