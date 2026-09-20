@@ -1,4 +1,4 @@
-<div class="flex-1 overflow-y-auto px-7 py-6">
+<div class="flex-1 overflow-y-auto px-4 xs:px-7 py-4 xs:py-6">
   @if (isLoading()) {
     @if (viewMode() === 'list') {
       <div class="border border-border rounded-sm overflow-hidden divide-y divide-border bg-card">
@@ -19,7 +19,7 @@
         }
       </div>
     } @else {
-      <div class="grid grid-cols-2 lg:grid-cols-3 gap-3">
+      <div class="grid grid-cols-1 xs:grid-cols-2 lg:grid-cols-3 gap-3">
         @for (_ of [1, 2, 3, 4, 5, 6]; track _) {
           <div
             class="border border-border rounded-sm p-4 bg-card flex flex-col gap-3 animate-pulse"
@@ -61,7 +61,7 @@
         }
       </div>
     } @else {
-      <div class="grid grid-cols-2 lg:grid-cols-3 gap-3">
+      <div class="grid grid-cols-1 xs:grid-cols-2 lg:grid-cols-3 gap-3">
         @for (bookmark of bookmarks(); track bookmark.id) {
           <app-bookmark [bookmark]="bookmark" [viewMode]="viewMode()" />
         }

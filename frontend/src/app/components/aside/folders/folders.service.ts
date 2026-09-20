@@ -12,6 +12,15 @@ export class FoldersService {
   private readonly isLoadingSignal = signal<boolean>(false);
   readonly folders = this.foldersSignal.asReadonly();
   readonly isLoading = this.isLoadingSignal.asReadonly();
+  readonly isCreateModalOpened = signal<boolean>(false);
+
+  public openCreateModal(): void {
+    this.isCreateModalOpened.set(true);
+  }
+
+  public closeCreateModal(): void {
+    this.isCreateModalOpened.set(false);
+  }
 
   public getAll(): Observable<IFolder[]> {
     this.isLoadingSignal.set(true);

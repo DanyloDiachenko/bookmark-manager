@@ -25,6 +25,7 @@
   --color-sidebar-foreground:    var(--sidebar-foreground);
   --color-sidebar-border:        var(--sidebar-border);
   --radius-sm: var(--radius);
+  --breakpoint-xs: 500px;
 }
 
 :root {

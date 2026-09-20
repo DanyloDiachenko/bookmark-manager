@@ -1,4 +1,27 @@
-<header class="px-7 py-4 border-b border-border flex items-center gap-3 shrink-0">
+<header class="px-4 xs:px-7 py-3 xs:py-4 border-b border-border flex items-center gap-3 shrink-0">
+  <button
+    type="button"
+    class="xs:hidden flex items-center justify-center p-1.5 -ml-1 text-muted-foreground hover:text-foreground hover:bg-accent rounded-sm cursor-pointer transition-colors"
+    (click)="toggleSidebar()"
+    aria-label="Toggle navigation sidebar"
+  >
+    <svg
+      xmlns="http://www.w3.org/2000/svg"
+      width="20"
+      height="20"
+      viewBox="0 0 24 24"
+      fill="none"
+      stroke="currentColor"
+      stroke-width="2"
+      stroke-linecap="round"
+      stroke-linejoin="round"
+      class="lucide lucide-menu"
+    >
+      <line x1="4" x2="20" y1="12" y2="12"></line>
+      <line x1="4" x2="20" y1="6" y2="6"></line>
+      <line x1="4" x2="20" y1="18" y2="18"></line>
+    </svg>
+  </button>
   <app-search />
   <app-controls />
 </header>

@@ -1,21 +1,20 @@
-import { Component, computed, inject, OnInit, signal } from '@angular/core';
+import { Component, computed, inject, OnInit } from '@angular/core';
 import { FoldersService } from './folders.service';
-import { CreateFolderRequest } from './folders.types';
-import { CreateFolderModal } from '../../modals/create-folder-modal/create-folder-modal';
 import { NgClass } from '@angular/common';
 import { BookmarkFiltersService } from '../../screens/bookmark-screen/bookmark-filters.service';
+import { SidebarService } from '../../../services/sidebar.service';
 
 @Component({
   selector: 'app-folders',
-  imports: [CreateFolderModal, NgClass],
+  imports: [NgClass],
   templateUrl: './folders.html',
   styleUrl: './folders.css',
 })
 export class Folders implements OnInit {
   private readonly foldersService = inject(FoldersService);
   private readonly bookmarkFiltersService = inject(BookmarkFiltersService);
+  private readonly sidebarService = inject(SidebarService);
   readonly folders = this.foldersService.folders;
-  readonly isCreateFolderModalOpened = signal<boolean>(false);
   readonly currentFolderId = computed(() => this.bookmarkFiltersService.state().folderId);
 
   ngOnInit() {
@@ -24,6 +23,9 @@ export class Folders implements OnInit {
 
   public changeFolder(folderId: string) {
     this.bookmarkFiltersService.toggleFolder(folderId);
+    if (typeof window !== 'undefined' && window.innerWidth < 500) {
+      this.sidebarService.close();
+    }
   }
 
   public isLoading(): boolean {
@@ -31,17 +33,7 @@ export class Folders implements OnInit {
   }
 
   public openCreateFolderModal() {
-    this.isCreateFolderModalOpened.set(true);
-  }
-
-  public closeCreateFolderModal() {
-    this.isCreateFolderModalOpened.set(false);
-  }
-
-  public createFolder(data: CreateFolderRequest) {
-    this.foldersService.create(data).subscribe({
-      next: () => this.closeCreateFolderModal(),
-    });
+    this.foldersService.openCreateModal();
   }
 
   public deleteFolder(id: string) {
