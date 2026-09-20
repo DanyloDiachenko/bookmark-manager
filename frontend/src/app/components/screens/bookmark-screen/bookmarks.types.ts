@@ -29,9 +29,7 @@ export interface UpdateBookmarkRequest extends Partial<CreateBookmarkRequest> {}
 export interface BookmarkFilterParams {
   isStarred?: boolean;
   isReadLater?: boolean;
-  folder?: string;
   folderId?: string;
-  tag?: string;
   tagId?: string;
   search?: string;
 }

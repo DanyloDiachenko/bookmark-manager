@@ -7,4 +7,6 @@ import { Component } from '@angular/core';
   styleUrl: './search.css',
   host: { class: 'max-w-sm flex-1' },
 })
-export class Search {}
+export class Search {
+  
+}
