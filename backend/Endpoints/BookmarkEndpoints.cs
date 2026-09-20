@@ -174,6 +174,12 @@ public static class BookmarkEndpoints
                 title = title[..150];
             }
 
+            var bookmarkExists = await db.Bookmarks.AnyAsync(b => b.UserId == userId && b.Title.ToLower() == title.ToLower());
+            if (bookmarkExists)
+            {
+                return Results.Conflict(new { message = "Bookmark with this title already exists." });
+            }
+
             var description = !string.IsNullOrWhiteSpace(request.Description)
                 ? request.Description.Trim()
                 : metadata.Description;
@@ -265,6 +271,7 @@ public static class BookmarkEndpoints
         .Produces<BookmarkResponse>(StatusCodes.Status201Created)
         .ProducesValidationProblem()
         .ProducesProblem(StatusCodes.Status400BadRequest)
+        .ProducesProblem(StatusCodes.Status409Conflict)
         .Produces(StatusCodes.Status401Unauthorized);
 
         group.MapPut("/{id:guid}", async (
@@ -319,7 +326,15 @@ public static class BookmarkEndpoints
             if (request.Title != null)
             {
                 var trimmedTitle = request.Title.Trim();
-                bookmark.Title = trimmedTitle.Length > 150 ? trimmedTitle[..150] : trimmedTitle;
+                var newTitle = trimmedTitle.Length > 150 ? trimmedTitle[..150] : trimmedTitle;
+
+                var titleExists = await db.Bookmarks.AnyAsync(b => b.UserId == userId && b.Id != id && b.Title.ToLower() == newTitle.ToLower());
+                if (titleExists)
+                {
+                    return Results.Conflict(new { message = "Bookmark with this title already exists." });
+                }
+
+                bookmark.Title = newTitle;
             }
 
             if (request.Description != null)
@@ -398,6 +413,7 @@ public static class BookmarkEndpoints
         .ProducesValidationProblem()
         .ProducesProblem(StatusCodes.Status400BadRequest)
         .ProducesProblem(StatusCodes.Status404NotFound)
+        .ProducesProblem(StatusCodes.Status409Conflict)
         .Produces(StatusCodes.Status401Unauthorized);
 
         group.MapDelete("/{id:guid}", async (Guid id, ClaimsPrincipal userClaims, AppDbContext db) =>

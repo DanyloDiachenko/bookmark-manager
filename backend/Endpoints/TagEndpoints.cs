@@ -42,6 +42,10 @@ public static class TagEndpoints
             {
                 return Results.BadRequest(new { message = "Tag title can not be empty" });
             }
+            if (request.Title.Trim().Length > 50)
+            {
+                return Results.BadRequest(new { message = "Tag title cannot exceed 50 characters." });
+            }
 
             var userId = userClaims.GetUserId();
             var title = request.Title.Trim().ToLower();

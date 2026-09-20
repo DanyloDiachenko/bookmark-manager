@@ -64,9 +64,10 @@
     </button>
   </div>
   <button
-    class="flex items-center gap-1.5 px-3 py-1.5 bg-primary text-primary-foreground text-sm rounded-sm hover:opacity-90 transition-opacity"
+    class="flex items-center gap-1.5 px-3 py-1.5 bg-primary text-primary-foreground text-sm rounded-sm hover:opacity-90 transition-opacity cursor-pointer disabled:opacity-50 disabled:cursor-not-allowed"
+    [disabled]="!isAuthenticated()"
     (click)="openCreateBookmarkModal()"
-    >
+  >
     <svg
       xmlns="http://www.w3.org/2000/svg"
       width="24"
@@ -80,9 +81,61 @@
       class="lucide lucide-plus w-3.5 h-3.5"
     >
       <path d="M5 12h14"></path>
-      <path d="M12 5v14"></path></svg
-    >Add
+      <path d="M12 5v14"></path>
+    </svg>
+    Add
   </button>
+
+  @if (isAuthenticated()) {
+    <button
+      type="button"
+      (click)="logout()"
+      class="flex items-center gap-1.5 px-2.5 py-1.5 border border-border text-foreground hover:bg-muted text-sm rounded-sm transition-colors cursor-pointer"
+      title="Log out"
+    >
+      <svg
+        xmlns="http://www.w3.org/2000/svg"
+        width="24"
+        height="24"
+        viewBox="0 0 24 24"
+        fill="none"
+        stroke="currentColor"
+        stroke-width="2"
+        stroke-linecap="round"
+        stroke-linejoin="round"
+        class="lucide lucide-log-out w-3.5 h-3.5"
+      >
+        <path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"></path>
+        <polyline points="16 17 21 12 16 7"></polyline>
+        <line x1="21" x2="9" y1="12" y2="12"></line>
+      </svg>
+      Logout
+    </button>
+  } @else {
+    <a
+      routerLink="/auth"
+      class="flex items-center gap-1.5 px-2.5 py-1.5 border border-border text-foreground hover:bg-muted text-sm rounded-sm transition-colors cursor-pointer font-medium"
+      title="Log in"
+    >
+      <svg
+        xmlns="http://www.w3.org/2000/svg"
+        width="24"
+        height="24"
+        viewBox="0 0 24 24"
+        fill="none"
+        stroke="currentColor"
+        stroke-width="2"
+        stroke-linecap="round"
+        stroke-linejoin="round"
+        class="lucide lucide-log-in w-3.5 h-3.5"
+      >
+        <path d="M15 3h4a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2h-4"></path>
+        <polyline points="10 17 15 12 10 7"></polyline>
+        <line x1="15" x2="3" y1="12" y2="12"></line>
+      </svg>
+      Login
+    </a>
+  }
 </div>
 
 <app-create-bookmark-modal

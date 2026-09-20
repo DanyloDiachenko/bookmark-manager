@@ -3,6 +3,7 @@ import { FoldersService } from './folders.service';
 import { NgClass } from '@angular/common';
 import { BookmarkFiltersService } from '../../screens/bookmark-screen/bookmark-filters.service';
 import { SidebarService } from '../../../services/sidebar.service';
+import { AuthService } from '../../screens/auth-screen/auth.service';
 
 @Component({
   selector: 'app-folders',
@@ -14,6 +15,8 @@ export class Folders implements OnInit {
   private readonly foldersService = inject(FoldersService);
   private readonly bookmarkFiltersService = inject(BookmarkFiltersService);
   private readonly sidebarService = inject(SidebarService);
+  private readonly authService = inject(AuthService);
+  readonly isAuthenticated = this.authService.isAuthenticated;
   readonly folders = this.foldersService.folders;
   readonly currentFolderId = computed(() => this.bookmarkFiltersService.state().folderId);
 

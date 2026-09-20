@@ -15,3 +15,8 @@ export interface AuthResponse {
   userId: string;
   email: string;
 }
+
+export interface UserProfileResponse {
+  userId: string;
+  email: string;
+}
