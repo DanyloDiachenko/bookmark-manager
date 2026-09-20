@@ -1,0 +1,40 @@
+services:
+  postgres:
+    image: postgres:16-alpine
+    container_name: bookmark-postgres
+    restart: unless-stopped
+    environment:
+      POSTGRES_DB: bookmark_db
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: danil11122
+    ports:
+      - "5432:5432"
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U postgres -d bookmark_db"]
+      interval: 5s
+      timeout: 5s
+      retries: 5
+
+  backend:
+    build:
+      context: ./backend
+      dockerfile: Dockerfile
+    container_name: bookmark-backend
+    restart: unless-stopped
+    depends_on:
+      postgres:
+        condition: service_healthy
+    ports:
+      - "5075:5075"
+    environment:
+      - ASPNETCORE_ENVIRONMENT=Development
+      - ConnectionStrings__DefaultConnection=Host=postgres;Port=5432;Database=bookmark_db;Username=postgres;Password=danil11122
+      - Jwt__Key=SuperSecretKeyForDevelopmentOnlyPleaseChangeInProductionBookmarkApp123!
+      - Jwt__Issuer=BookmarkManagerApi
+      - Jwt__Audience=BookmarkManagerClient
+      - Jwt__ExpiresInDays=7
+
+volumes:
+  postgres_data:

@@ -46,10 +46,18 @@ public static class FolderEndpoints
             }
 
             var userId = userClaims.GetUserId();
+            var title = request.Title.Trim();
+
+            var exists = await db.Folders.AnyAsync(f => f.UserId == userId && f.Title.ToLower() == title.ToLower());
+            if (exists)
+            {
+                return Results.Conflict(new { message = "Folder with this title already exists." });
+            }
+
             var folder = new Folder
             {
                 UserId = userId,
-                Title = request.Title.Trim(),
+                Title = title,
                 Color = request.Color.Trim()
             };
 
@@ -63,6 +71,7 @@ public static class FolderEndpoints
         .WithDescription("Creates a new folder with the specified title and color.")
         .Produces<FolderResponse>(StatusCodes.Status201Created)
         .ProducesProblem(StatusCodes.Status400BadRequest)
+        .ProducesProblem(StatusCodes.Status409Conflict)
         .Produces(StatusCodes.Status401Unauthorized);
 
         group.MapPut("{id:guid}", async (
@@ -91,7 +100,14 @@ public static class FolderEndpoints
                 return Results.NotFound(new { message = "Folder was not found" });
             }
 
-            folder.Title = request.Title.Trim();
+            var newTitle = request.Title.Trim();
+            var duplicateExists = await db.Folders.AnyAsync(f => f.UserId == userId && f.Id != id && f.Title.ToLower() == newTitle.ToLower());
+            if (duplicateExists)
+            {
+                return Results.Conflict(new { message = "Folder with this title already exists." });
+            }
+
+            folder.Title = newTitle;
             folder.Color = request.Color.Trim();
 
             await db.SaveChangesAsync();
@@ -104,6 +120,7 @@ public static class FolderEndpoints
         .Produces<FolderResponse>(StatusCodes.Status200OK)
         .ProducesProblem(StatusCodes.Status400BadRequest)
         .ProducesProblem(StatusCodes.Status404NotFound)
+        .ProducesProblem(StatusCodes.Status409Conflict)
         .Produces(StatusCodes.Status401Unauthorized);
 
         group.MapDelete("{id:guid}", async (

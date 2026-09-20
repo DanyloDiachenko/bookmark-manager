@@ -1,16 +1,20 @@
 import { Component, inject, signal } from '@angular/core';
+import { RouterLink } from '@angular/router';
 import { CreateBookmarkModal } from '../../modals/create-bookmark-modal/create-bookmark-modal';
 import { BookmarksService } from '../../screens/bookmark-screen/bookmarks.service';
+import { AuthService } from '../../screens/auth-screen/auth.service';
 
 @Component({
   selector: 'app-controls',
-  imports: [CreateBookmarkModal],
+  imports: [CreateBookmarkModal, RouterLink],
   templateUrl: './controls.html',
   styleUrl: './controls.css',
   host: { class: 'ml-auto' },
 })
 export class Controls {
   private readonly bookmarkService = inject(BookmarksService);
+  private readonly authService = inject(AuthService);
+  readonly isAuthenticated = this.authService.isAuthenticated;
   readonly isCreateBookmarkModalOpened = signal<boolean>(false);
   readonly viewMode = this.bookmarkService.viewMode;
 
@@ -28,5 +32,10 @@ export class Controls {
 
   public isLoading() {
     return this.bookmarkService.isLoading();
+  }
+
+  public logout() {
+    this.authService.logout();
+    this.bookmarkService.refetch();
   }
 }

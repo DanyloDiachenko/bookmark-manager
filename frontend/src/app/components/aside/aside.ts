@@ -9,8 +9,6 @@ import { FoldersService } from './folders/folders.service';
 import { TagsService } from './tags/tags.service';
 import { CreateFolderModal } from '../modals/create-folder-modal/create-folder-modal';
 import { CreateTagModal } from '../modals/create-tag-modal/create-tag-modal';
-import { CreateFolderRequest } from './folders/folders.types';
-import { CreateTagRequest } from './tags/tags.types';
 
 @Component({
   selector: 'app-aside',
@@ -34,18 +32,6 @@ export class Aside {
 
   public close(): void {
     this.sidebarService.close();
-  }
-
-  public createFolder(data: CreateFolderRequest): void {
-    this.foldersService.create(data).subscribe({
-      next: () => this.foldersService.closeCreateModal(),
-    });
-  }
-
-  public createTag(data: CreateTagRequest): void {
-    this.tagsService.create(data).subscribe({
-      next: () => this.tagsService.closeCreateModal(),
-    });
   }
 
   @HostListener('document:keydown.escape')

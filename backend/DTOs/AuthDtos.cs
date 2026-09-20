@@ -21,3 +21,10 @@ public record LoginRequest(string Email, string Password);
 /// <param name="UserId">Unique user ID.</param>
 /// <param name="Email">User email address.</param>
 public record AuthResponse(string Token, Guid UserId, string Email);
+
+/// <summary>
+/// User profile details response.
+/// </summary>
+/// <param name="UserId">Unique user ID.</param>
+/// <param name="Email">User email address.</param>
+public record UserProfileResponse(Guid UserId, string Email);

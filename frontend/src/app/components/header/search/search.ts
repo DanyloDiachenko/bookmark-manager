@@ -1,5 +1,6 @@
 import { Component, computed, inject } from '@angular/core';
 import { BookmarkFiltersService } from '../../screens/bookmark-screen/bookmark-filters.service';
+import { AuthService } from '../../screens/auth-screen/auth.service';
 
 @Component({
   selector: 'app-search',
@@ -10,6 +11,8 @@ import { BookmarkFiltersService } from '../../screens/bookmark-screen/bookmark-f
 })
 export class Search {
   private readonly bookmarkFiltersService = inject(BookmarkFiltersService);
+  private readonly authService = inject(AuthService);
+  readonly isAuthenticated = this.authService.isAuthenticated;
   readonly search = computed(() => this.bookmarkFiltersService.state().search ?? '');
 
   public setSearch(event: Event): void {
