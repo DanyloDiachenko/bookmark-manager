@@ -16,7 +16,7 @@ export class Subheader {
   private readonly bookmarkFiltersService = inject(BookmarkFiltersService);
   private readonly foldersService = inject(FoldersService);
   private readonly tagService = inject(TagsService);
-  readonly allBookmarkCount = this.bookmarkService.allBookmarkCount;
+  readonly allBookmarkCount = this.bookmarkService.filteredCount;
   readonly filters = computed(() => this.bookmarkFiltersService.state());
 
   readonly sectionTitle = computed(() => {

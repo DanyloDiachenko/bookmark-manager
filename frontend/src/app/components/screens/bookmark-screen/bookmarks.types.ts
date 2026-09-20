@@ -39,3 +39,9 @@ export type GetBookmarksResponse = IBookmark[];
 
 export type ViewMode = 'grid' | 'list';
 
+export interface BookmarkStats {
+  all: number;
+  starred: number;
+  readLater: number;
+}
+

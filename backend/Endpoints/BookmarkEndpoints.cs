@@ -114,6 +114,21 @@ public static class BookmarkEndpoints
         .Produces<List<BookmarkResponse>>(StatusCodes.Status200OK)
         .Produces(StatusCodes.Status401Unauthorized);
 
+        group.MapGet("/stats", async (ClaimsPrincipal userClaims, AppDbContext db) =>
+        {
+            var userId = userClaims.GetUserId();
+            var all = await db.Bookmarks.CountAsync(b => b.UserId == userId);
+            var starred = await db.Bookmarks.CountAsync(b => b.UserId == userId && b.IsStarred);
+            var readLater = await db.Bookmarks.CountAsync(b => b.UserId == userId && b.ToRead);
+
+            return Results.Ok(new BookmarkStatsResponse(all, starred, readLater));
+        })
+        .WithName("GetBookmarkStats")
+        .WithSummary("Get bookmark counts for sections")
+        .WithDescription("Returns total, starred, and read later counts for the authenticated user, independent of current filters.")
+        .Produces<BookmarkStatsResponse>(StatusCodes.Status200OK)
+        .Produces(StatusCodes.Status401Unauthorized);
+
         group.MapGet("/{id:guid}", async (Guid id, ClaimsPrincipal userClaims, AppDbContext db) =>
         {
             var userId = userClaims.GetUserId();

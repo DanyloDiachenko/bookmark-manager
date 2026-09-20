@@ -68,3 +68,15 @@ public record BookmarkResponse(
     List<TagResponse> Tags
 );
 
+/// <summary>
+/// Global counts for bookmarks.
+/// </summary>
+/// <param name="All">Total bookmarks count.</param>
+/// <param name="Starred">Starred bookmarks count.</param>
+/// <param name="ReadLater">Read later bookmarks count.</param>
+public record BookmarkStatsResponse(
+    int All,
+    int Starred,
+    int ReadLater
+);
+
