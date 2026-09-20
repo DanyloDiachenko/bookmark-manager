@@ -30,12 +30,28 @@
   <div class="flex flex-wrap gap-1 px-2 mt-2" bis_skin_checked="1">
     @if (tags().length > 0) {
       @for (tag of tags(); track tag.id) {
-        <button
-          class="text-[11px] px-2 py-0.5 rounded-full border transition-colors border-border text-muted-foreground hover:text-foreground hover:border-foreground flex items-center justify-between gap-2"
+        <div
+          class="text-[11px] pl-2 pr-1.5 py-0.5 rounded-full border transition-colors border-border flex items-center justify-between gap-1.5"
           style="font-family: 'JetBrains Mono', monospace"
+          [ngClass]="
+            currentTagId() === tag.id
+              ? 'bg-foreground text-background font-medium'
+              : 'text-muted-foreground hover:text-foreground hover:bg-accent'
+          "
         >
-          {{ tag.title }}
-          <button class="cursor-pointer leading-0" (click)="deleteTag(tag.id)">
+          <button
+            type="button"
+            class="cursor-pointer truncate"
+            (click)="changeCurrentTag(tag.id)"
+          >
+            {{ tag.title }}
+          </button>
+          <button
+            type="button"
+            class="cursor-pointer leading-0 shrink-0 opacity-70 hover:opacity-100 transition-opacity"
+            (click)="deleteTag(tag.id)"
+            title="Delete tag"
+          >
             <svg
               xmlns="http://www.w3.org/2000/svg"
               width="24"
@@ -52,7 +68,7 @@
               <path d="M6 6l12 12"></path>
             </svg>
           </button>
-        </button>
+        </div>
       }
     } @else {
       @if (isLoading()) {

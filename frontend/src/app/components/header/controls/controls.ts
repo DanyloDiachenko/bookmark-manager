@@ -12,6 +12,11 @@ import { BookmarksService } from '../../screens/bookmark-screen/bookmarks.servic
 export class Controls {
   private readonly bookmarkService = inject(BookmarksService);
   readonly isCreateBookmarkModalOpened = signal<boolean>(false);
+  readonly viewMode = this.bookmarkService.viewMode;
+
+  public setViewMode(mode: 'grid' | 'list') {
+    this.bookmarkService.setViewMode(mode);
+  }
 
   public openCreateBookmarkModal() {
     this.isCreateBookmarkModalOpened.set(true);

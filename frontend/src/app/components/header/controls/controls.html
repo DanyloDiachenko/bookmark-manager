@@ -3,7 +3,16 @@
     class="flex items-center border border-border rounded-sm overflow-hidden"
     bis_skin_checked="1"
   >
-    <button class="p-1.5 transition-colors bg-foreground text-background">
+    <button
+      type="button"
+      (click)="setViewMode('grid')"
+      [class]="
+        viewMode() === 'grid'
+          ? 'p-1.5 transition-colors bg-foreground text-background cursor-pointer'
+          : 'p-1.5 transition-colors text-muted-foreground hover:text-foreground cursor-pointer'
+      "
+      aria-label="Grid view"
+    >
       <svg
         xmlns="http://www.w3.org/2000/svg"
         width="24"
@@ -14,15 +23,25 @@
         stroke-width="2"
         stroke-linecap="round"
         stroke-linejoin="round"
-        class="lucide lucide-grid3x3 lucide-grid-3x3 w-3.5 h-3.5"
+        class="lucide lucide-grid3x3 w-3.5 h-3.5"
       >
         <rect width="18" height="18" x="3" y="3" rx="2"></rect>
         <path d="M3 9h18"></path>
         <path d="M3 15h18"></path>
         <path d="M9 3v18"></path>
         <path d="M15 3v18"></path>
-      </svg></button
-    ><button class="p-1.5 transition-colors text-muted-foreground hover:text-foreground">
+      </svg>
+    </button>
+    <button
+      type="button"
+      (click)="setViewMode('list')"
+      [class]="
+        viewMode() === 'list'
+          ? 'p-1.5 transition-colors bg-foreground text-background cursor-pointer'
+          : 'p-1.5 transition-colors text-muted-foreground hover:text-foreground cursor-pointer'
+      "
+      aria-label="List view"
+    >
       <svg
         xmlns="http://www.w3.org/2000/svg"
         width="24"

@@ -1,9 +1,15 @@
 <div
-  class="px-7 py-2.5 border-b border-border flex items-center gap-2 shrink-0 bg-background"
+  class="px-7 py-2.5 border-b border-border flex items-center shrink-0 bg-background"
   bis_skin_checked="1"
 >
-  <span class="text-sm font-semibold text-foreground">All Bookmarks</span
-  ><span class="text-xs text-muted-foreground" style="font-family: 'JetBrains Mono', monospace"
-    >— {{allBookmarkCount()}}</span
+  <span class="text-sm font-semibold text-foreground">{{ sectionTitle() }} Bookmarks</span>
+  @if (folderTitle()) {
+    <span class="text-sm font-semibold text-foreground">&nbsp;in '{{ folderTitle() }}' Folder</span>
+  }
+  @if (tagTitle()) {
+    <span class="text-sm font-semibold text-foreground">&nbsp;with '{{ tagTitle() }}' Tag</span>
+  }
+  <span class="text-xs text-muted-foreground" style="font-family: 'JetBrains Mono', monospace"
+    >&nbsp;— {{ allBookmarkCount() }}</span
   >
 </div>
