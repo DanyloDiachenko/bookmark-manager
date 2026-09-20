@@ -49,4 +49,8 @@ export class BookmarkFiltersService {
     const current = this.state().tagId;
     this.updateFilters({ tagId: current === tagId ? undefined : tagId });
   }
+
+  public refetch(): void {
+    this.state$.next({ ...this.state() });
+  }
 }

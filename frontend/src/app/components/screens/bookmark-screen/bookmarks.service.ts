@@ -6,7 +6,16 @@ import {
   IBookmark,
   UpdateBookmarkRequest,
 } from './bookmarks.types';
-import { catchError, finalize, Observable, of, switchMap, tap } from 'rxjs';
+import {
+  catchError,
+  combineLatest,
+  finalize,
+  BehaviorSubject,
+  Observable,
+  of,
+  switchMap,
+  tap,
+} from 'rxjs';
 import { BookmarkFilters, BookmarkFiltersService } from './bookmark-filters.service';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 
@@ -29,15 +38,21 @@ export class BookmarksService {
     () => this.bookmarksSignal().filter((b) => b.isReadLater === true).length,
   );
 
+  private readonly refetchTrigger$ = new BehaviorSubject<void>(undefined);
+
   constructor() {
     this.initFiltersPipeline();
   }
 
+  public refetch(): void {
+    this.refetchTrigger$.next();
+  }
+
   private initFiltersPipeline() {
-    this.filters.filterChange$
+    combineLatest([this.filters.filterChange$, this.refetchTrigger$])
       .pipe(
         tap(() => this.isLoadingSignal.set(true)),
-        switchMap((filtersState) =>
+        switchMap(([filtersState]) =>
           this.fetchBookmarks(filtersState).pipe(
             catchError(() => of([])),
             finalize(() => this.isLoadingSignal.set(false)),
@@ -91,11 +106,9 @@ export class BookmarksService {
   public update(id: string, data: UpdateBookmarkRequest): Observable<IBookmark> {
     this.isLoadingSignal.set(true);
     return this.http.put<IBookmark>(`/api/bookmarks/${id}`, data).pipe(
-      tap((updatedBookmark) =>
-        this.bookmarksSignal.update((bookmarks) =>
-          bookmarks.map((b) => (b.id === id ? updatedBookmark : b)),
-        ),
-      ),
+      tap(() => {
+        this.refetch();
+      }),
       finalize(() => this.isLoadingSignal.set(false)),
     );
   }

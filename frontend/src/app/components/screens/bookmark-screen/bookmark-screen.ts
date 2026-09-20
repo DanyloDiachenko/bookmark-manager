@@ -8,12 +8,8 @@ import { BookmarksService } from './bookmarks.service';
   templateUrl: './bookmark-screen.html',
   host: { class: 'flex-1 flex flex-col min-h-0 overflow-hidden' },
 })
-export class BookmarkScreen implements OnInit {
+export class BookmarkScreen {
   private readonly bookmarkService = inject(BookmarksService);
   readonly bookmarks = this.bookmarkService.bookmarks;
   readonly isLoading = this.bookmarkService.isLoading;
-
-  ngOnInit() {
-    this.bookmarkService.getAll().subscribe();
-  }
 }
