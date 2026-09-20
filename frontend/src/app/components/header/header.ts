@@ -1,6 +1,7 @@
-import { Component } from '@angular/core';
+import { Component, inject } from '@angular/core';
 import { Search } from "./search/search";
-import { Controls } from "./controls/controls"
+import { Controls } from "./controls/controls";
+import { SidebarService } from '../../services/sidebar.service';
 
 @Component({
   selector: 'app-header',
@@ -8,4 +9,10 @@ import { Controls } from "./controls/controls"
   templateUrl: './header.html',
   styleUrl: './header.css',
 })
-export class Header { }
+export class Header {
+  private readonly sidebarService = inject(SidebarService);
+
+  public toggleSidebar(): void {
+    this.sidebarService.toggle();
+  }
+}

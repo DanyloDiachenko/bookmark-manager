@@ -1,21 +1,20 @@
-import { Component, computed, inject, OnInit, signal } from '@angular/core';
+import { Component, computed, inject, OnInit } from '@angular/core';
 import { TagsService } from './tags.service';
-import { CreateTagModal } from '../../modals/create-tag-modal/create-tag-modal';
-import { CreateTagRequest } from './tags.types';
 import { NgClass } from '@angular/common';
 import { BookmarkFiltersService } from '../../screens/bookmark-screen/bookmark-filters.service';
+import { SidebarService } from '../../../services/sidebar.service';
 
 @Component({
   selector: 'app-tags',
-  imports: [CreateTagModal, NgClass],
+  imports: [NgClass],
   templateUrl: './tags.html',
   styleUrl: './tags.css',
 })
 export class Tags implements OnInit {
   private readonly tagsService = inject(TagsService);
   private readonly bookmarkFiltersService = inject(BookmarkFiltersService);
+  private readonly sidebarService = inject(SidebarService);
   readonly tags = this.tagsService.tags;
-  readonly isCreateTagModalOpened = signal<boolean>(false);
   readonly currentTagId = computed(() => this.bookmarkFiltersService.state().tagId);
 
   ngOnInit() {
@@ -24,6 +23,9 @@ export class Tags implements OnInit {
 
   public changeCurrentTag(tagId: string) {
     this.bookmarkFiltersService.toggleTag(tagId);
+    if (typeof window !== 'undefined' && window.innerWidth < 500) {
+      this.sidebarService.close();
+    }
   }
 
   public isLoading(): boolean {
@@ -31,17 +33,7 @@ export class Tags implements OnInit {
   }
 
   public openCreateTagModal() {
-    this.isCreateTagModalOpened.set(true);
-  }
-
-  public closeCreateTagModal() {
-    this.isCreateTagModalOpened.set(false);
-  }
-
-  public createTag(data: CreateTagRequest) {
-    this.tagsService.create(data).subscribe({
-      next: () => this.closeCreateTagModal(),
-    });
+    this.tagsService.openCreateModal();
   }
 
   public deleteTag(id: string) {

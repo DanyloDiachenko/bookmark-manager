@@ -12,6 +12,15 @@ export class TagsService {
   private readonly isLoadingSignal = signal<boolean>(false);
   readonly tags = this.tagsSignal.asReadonly();
   readonly isLoading = this.isLoadingSignal.asReadonly();
+  readonly isCreateModalOpened = signal<boolean>(false);
+
+  public openCreateModal(): void {
+    this.isCreateModalOpened.set(true);
+  }
+
+  public closeCreateModal(): void {
+    this.isCreateModalOpened.set(false);
+  }
 
   public getAll(): Observable<ITag[]> {
     this.isLoadingSignal.set(true);
