@@ -12,7 +12,8 @@ public static class TagEndpoints
     public static IEndpointRouteBuilder MapTagEndpoints(this IEndpointRouteBuilder app)
     {
         var group = app.MapGroup("/api/tags")
-            .RequireAuthorization();
+            .RequireAuthorization()
+            .WithTags("Tags");
 
         group.MapGet("/", async (ClaimsPrincipal userClaims, AppDbContext db) =>
         {
@@ -28,7 +29,12 @@ public static class TagEndpoints
                 .ToListAsync();
 
             return Results.Ok(tags);
-        });
+        })
+        .WithName("GetTags")
+        .WithSummary("Get all tags")
+        .WithDescription("Returns all tags created by the authenticated user.")
+        .Produces<List<TagResponse>>(StatusCodes.Status200OK)
+        .Produces(StatusCodes.Status401Unauthorized);
 
         group.MapPost("/", async (CreateTagRequest request, ClaimsPrincipal userClaims, AppDbContext db) =>
         {
@@ -56,7 +62,14 @@ public static class TagEndpoints
             await db.SaveChangesAsync();
 
             return Results.Created($"/api/tags/{tag.Id}", new TagResponse(tag.Id, tag.Title));
-        });
+        })
+        .WithName("CreateTag")
+        .WithSummary("Create a new tag")
+        .WithDescription("Creates a new unique tag for the authenticated user.")
+        .Produces<TagResponse>(StatusCodes.Status201Created)
+        .ProducesProblem(StatusCodes.Status400BadRequest)
+        .ProducesProblem(StatusCodes.Status409Conflict)
+        .Produces(StatusCodes.Status401Unauthorized);
 
         group.MapDelete("/{id:guid}", async (Guid id, ClaimsPrincipal userClaims, AppDbContext db) =>
         {
@@ -72,7 +85,13 @@ public static class TagEndpoints
             await db.SaveChangesAsync();
 
             return Results.NoContent();
-        });
+        })
+        .WithName("DeleteTag")
+        .WithSummary("Delete a tag")
+        .WithDescription("Deletes a tag by its unique ID.")
+        .Produces(StatusCodes.Status204NoContent)
+        .ProducesProblem(StatusCodes.Status404NotFound)
+        .Produces(StatusCodes.Status401Unauthorized);
 
         return app;
     }
