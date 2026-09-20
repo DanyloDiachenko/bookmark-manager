@@ -61,11 +61,9 @@
 <app-create-folder-modal
   [isOpen]="foldersService.isCreateModalOpened()"
   (close)="foldersService.closeCreateModal()"
-  (createFolder)="createFolder($event)"
 />
 
 <app-create-tag-modal
   [isOpen]="tagsService.isCreateModalOpened()"
   (close)="tagsService.closeCreateModal()"
-  (createTag)="createTag($event)"
 />

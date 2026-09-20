@@ -2,6 +2,9 @@ import { Component, inject, input, output, signal } from '@angular/core';
 import { FormBuilder, ReactiveFormsModule, Validators } from '@angular/forms';
 import { ColorPickerDirective } from 'ngx-color-picker';
 import { CreateFolderRequest } from '../../aside/folders/folders.types';
+import { FoldersService } from '../../aside/folders/folders.service';
+import { getErrorMessage } from '../../../core/utils/error.utils';
+import { finalize } from 'rxjs';
 
 @Component({
   selector: 'app-create-folder-modal',
@@ -12,10 +15,11 @@ import { CreateFolderRequest } from '../../aside/folders/folders.types';
 })
 export class CreateFolderModal {
   private readonly fb = inject(FormBuilder);
+  private readonly foldersService = inject(FoldersService);
   readonly isOpen = input<boolean>(false);
   readonly close = output<void>();
-  readonly createFolder = output<CreateFolderRequest>();
   readonly isSubmitting = signal<boolean>(false);
+  readonly serverError = signal<string | null>(null);
 
   readonly defaultColors: string[] = [
     '#EF4444',
@@ -44,16 +48,35 @@ export class CreateFolderModal {
   }
 
   public onClose() {
+    this.serverError.set(null);
+    this.folderForm.reset({
+      title: '',
+      color: '#6366F1',
+    });
     this.close.emit();
   }
 
   public onSubmit() {
+    this.serverError.set(null);
+
     if (this.folderForm.invalid) {
       this.folderForm.markAllAsTouched();
       return;
     }
 
     const { title, color } = this.folderForm.getRawValue();
-    this.createFolder.emit({ title, color });
+    this.isSubmitting.set(true);
+
+    this.foldersService
+      .create({ title, color })
+      .pipe(finalize(() => this.isSubmitting.set(false)))
+      .subscribe({
+        next: () => {
+          this.onClose();
+        },
+        error: (err) => {
+          this.serverError.set(getErrorMessage(err, 'Failed to create folder'));
+        },
+      });
   }
 }

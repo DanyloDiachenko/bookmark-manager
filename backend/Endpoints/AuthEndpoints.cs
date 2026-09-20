@@ -2,6 +2,7 @@ using System.Security.Claims;
 using Backend.Data;
 using Backend.DTOs;
 using Backend.Entities;
+using Backend.Extensions;
 using Backend.Services;
 using FluentValidation;
 using Microsoft.EntityFrameworkCore;
@@ -79,6 +80,27 @@ public static class AuthEndpoints
         .ProducesValidationProblem()
         .Produces(StatusCodes.Status401Unauthorized)
         .AllowAnonymous();
+
+        group.MapGet("/profile", async (
+            ClaimsPrincipal userClaims,
+            AppDbContext db
+        ) =>
+        {
+            var userId = userClaims.GetUserId();
+            var user = await db.Users.AsNoTracking().FirstOrDefaultAsync(u => u.Id == userId);
+            if (user == null)
+            {
+                return Results.Unauthorized();
+            }
+
+            return Results.Ok(new UserProfileResponse(user.Id, user.Email));
+        })
+        .WithName("GetProfile")
+        .WithSummary("Get current user profile")
+        .WithDescription("Validates the JWT token and returns the current user profile.")
+        .Produces<UserProfileResponse>(StatusCodes.Status200OK)
+        .Produces(StatusCodes.Status401Unauthorized)
+        .RequireAuthorization();
 
         return group;
     }

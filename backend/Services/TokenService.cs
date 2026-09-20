@@ -29,11 +29,13 @@ public class TokenService : ITokenService
             new Claim(ClaimTypes.Email, user.Email)
         };
 
+        var expiresInDays = _configuration.GetValue<int?>("Jwt:ExpiresInDays") ?? 7;
+
         var token = new JwtSecurityToken(
             issuer: _configuration["Jwt:Issuer"],
             audience: _configuration["Jwt:Audience"],
             claims: claims,
-            expires: DateTime.UtcNow.AddDays(7),
+            expires: DateTime.UtcNow.AddDays(expiresInDays),
             signingCredentials: credentials
         );
 

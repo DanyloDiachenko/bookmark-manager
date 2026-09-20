@@ -45,6 +45,11 @@
             <span class="text-xs text-destructive"> Title is required. </span>
           }
         </div>
+        @if (serverError()) {
+          <div class="text-xs text-destructive">
+            {{ serverError() }}
+          </div>
+        }
         <div class="flex items-center justify-end gap-3 pt-3 mt-1">
           <button
             type="button"

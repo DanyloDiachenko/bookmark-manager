@@ -3,6 +3,7 @@ import { TagsService } from './tags.service';
 import { NgClass } from '@angular/common';
 import { BookmarkFiltersService } from '../../screens/bookmark-screen/bookmark-filters.service';
 import { SidebarService } from '../../../services/sidebar.service';
+import { AuthService } from '../../screens/auth-screen/auth.service';
 
 @Component({
   selector: 'app-tags',
@@ -14,6 +15,8 @@ export class Tags implements OnInit {
   private readonly tagsService = inject(TagsService);
   private readonly bookmarkFiltersService = inject(BookmarkFiltersService);
   private readonly sidebarService = inject(SidebarService);
+  private readonly authService = inject(AuthService);
+  readonly isAuthenticated = this.authService.isAuthenticated;
   readonly tags = this.tagsService.tags;
   readonly currentTagId = computed(() => this.bookmarkFiltersService.state().tagId);
 
