@@ -41,7 +41,14 @@ public static class AuthEndpoints
 
             var token = tokenService.GenerateToken(user);
             return Results.Ok(new AuthResponse(token, user.Id, user.Email));
-        });
+        })
+        .WithName("Register")
+        .WithSummary("Register a new user")
+        .WithDescription("Creates a new user account with hashed password and returns a JWT authentication token.")
+        .Produces<AuthResponse>(StatusCodes.Status200OK)
+        .ProducesValidationProblem()
+        .ProducesProblem(StatusCodes.Status409Conflict)
+        .AllowAnonymous();
 
         group.MapPost("/login", async (
             LoginRequest request,
@@ -64,7 +71,14 @@ public static class AuthEndpoints
 
             var token = tokenService.GenerateToken(user);
             return Results.Ok(new AuthResponse(token, user.Id, user.Email));
-        });
+        })
+        .WithName("Login")
+        .WithSummary("Log in user")
+        .WithDescription("Authenticates user credentials and returns a JWT authentication token.")
+        .Produces<AuthResponse>(StatusCodes.Status200OK)
+        .ProducesValidationProblem()
+        .Produces(StatusCodes.Status401Unauthorized)
+        .AllowAnonymous();
 
         return group;
     }

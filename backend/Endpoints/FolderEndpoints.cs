@@ -11,7 +11,9 @@ public static class FolderEndpoints
 {
     public static IEndpointRouteBuilder MapFolderEndpoints(this IEndpointRouteBuilder app)
     {
-        var group = app.MapGroup("/api/folders").RequireAuthorization();
+        var group = app.MapGroup("/api/folders")
+            .RequireAuthorization()
+            .WithTags("Folders");
 
         group.MapGet("/", async (
             ClaimsPrincipal userClaims, AppDbContext db
@@ -23,7 +25,12 @@ public static class FolderEndpoints
                 new FolderResponse(f.Id, f.Title, f.Color, f.Bookmarks.Count)).ToListAsync();
 
             return Results.Ok(folders);
-        });
+        })
+        .WithName("GetFolders")
+        .WithSummary("Get all folders")
+        .WithDescription("Returns all folders created by the authenticated user.")
+        .Produces<List<FolderResponse>>(StatusCodes.Status200OK)
+        .Produces(StatusCodes.Status401Unauthorized);
 
         group.MapPost("/", async (
         CreateFolderRequest request, ClaimsPrincipal userClaims, AppDbContext db
@@ -50,7 +57,13 @@ public static class FolderEndpoints
             await db.SaveChangesAsync();
 
             return Results.Created($"/api/folders/{folder.Id}", new FolderResponse(folder.Id, folder.Title, folder.Color, 0));
-        });
+        })
+        .WithName("CreateFolder")
+        .WithSummary("Create a new folder")
+        .WithDescription("Creates a new folder with the specified title and color.")
+        .Produces<FolderResponse>(StatusCodes.Status201Created)
+        .ProducesProblem(StatusCodes.Status400BadRequest)
+        .Produces(StatusCodes.Status401Unauthorized);
 
         group.MapPut("{id:guid}", async (
             Guid id,
@@ -84,7 +97,14 @@ public static class FolderEndpoints
             await db.SaveChangesAsync();
 
             return Results.Ok(new FolderResponse(folder.Id, folder.Title, folder.Color, folder.Bookmarks.Count));
-        });
+        })
+        .WithName("UpdateFolder")
+        .WithSummary("Update a folder")
+        .WithDescription("Updates the title and color of an existing folder.")
+        .Produces<FolderResponse>(StatusCodes.Status200OK)
+        .ProducesProblem(StatusCodes.Status400BadRequest)
+        .ProducesProblem(StatusCodes.Status404NotFound)
+        .Produces(StatusCodes.Status401Unauthorized);
 
         group.MapDelete("{id:guid}", async (
         Guid id, ClaimsPrincipal userClaims, AppDbContext db
@@ -102,7 +122,13 @@ public static class FolderEndpoints
             await db.SaveChangesAsync();
 
             return Results.NoContent();
-        });
+        })
+        .WithName("DeleteFolder")
+        .WithSummary("Delete a folder")
+        .WithDescription("Deletes the folder by its unique ID.")
+        .Produces(StatusCodes.Status204NoContent)
+        .ProducesProblem(StatusCodes.Status404NotFound)
+        .Produces(StatusCodes.Status401Unauthorized);
 
         return app;
     }

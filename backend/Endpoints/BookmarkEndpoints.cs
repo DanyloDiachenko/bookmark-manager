@@ -14,7 +14,9 @@ public static class BookmarkEndpoints
 {
     public static IEndpointRouteBuilder MapBookmarkEndpoints(this IEndpointRouteBuilder app)
     {
-        var group = app.MapGroup("/api/bookmarks").RequireAuthorization();
+        var group = app.MapGroup("/api/bookmarks")
+            .RequireAuthorization()
+            .WithTags("Bookmarks");
 
         group.MapGet("/", async (
             [FromQuery] bool? isStarred,
@@ -105,7 +107,12 @@ public static class BookmarkEndpoints
                 .ToListAsync();
 
             return Results.Ok(bookmarks);
-        });
+        })
+        .WithName("GetBookmarks")
+        .WithSummary("Get bookmarks with optional filtering")
+        .WithDescription("Returns bookmarks for the authenticated user. Allows filtering by isStarred, isReadLater, folder/folderId, tag/tagId, and search keyword.")
+        .Produces<List<BookmarkResponse>>(StatusCodes.Status200OK)
+        .Produces(StatusCodes.Status401Unauthorized);
 
         group.MapGet("/{id:guid}", async (Guid id, ClaimsPrincipal userClaims, AppDbContext db) =>
         {
@@ -128,7 +135,13 @@ public static class BookmarkEndpoints
                 .FirstOrDefaultAsync();
 
             return bookmark is not null ? Results.Ok(bookmark) : Results.NotFound(new { message = "Bookmark not found" });
-        });
+        })
+        .WithName("GetBookmarkById")
+        .WithSummary("Get bookmark by ID")
+        .WithDescription("Returns details of a specific bookmark belonging to the authenticated user.")
+        .Produces<BookmarkResponse>(StatusCodes.Status200OK)
+        .ProducesProblem(StatusCodes.Status404NotFound)
+        .Produces(StatusCodes.Status401Unauthorized);
 
         group.MapPost("/", async (
             CreateBookmarkRequest request,
@@ -245,7 +258,14 @@ public static class BookmarkEndpoints
             );
 
             return Results.Created($"/api/bookmarks/{bookmark.Id}", response);
-        });
+        })
+        .WithName("CreateBookmark")
+        .WithSummary("Create a new bookmark")
+        .WithDescription("Creates a bookmark for the specified URL. Automatically extracts web metadata (title, description, preview image) from the webpage. Allows associating existing or newly created folders, and assigning tags.")
+        .Produces<BookmarkResponse>(StatusCodes.Status201Created)
+        .ProducesValidationProblem()
+        .ProducesProblem(StatusCodes.Status400BadRequest)
+        .Produces(StatusCodes.Status401Unauthorized);
 
         group.MapPut("/{id:guid}", async (
             Guid id,
@@ -370,7 +390,15 @@ public static class BookmarkEndpoints
             );
 
             return Results.Ok(response);
-        });
+        })
+        .WithName("UpdateBookmark")
+        .WithSummary("Update a bookmark")
+        .WithDescription("Updates fields of an existing bookmark. If URL is modified, metadata is re-extracted.")
+        .Produces<BookmarkResponse>(StatusCodes.Status200OK)
+        .ProducesValidationProblem()
+        .ProducesProblem(StatusCodes.Status400BadRequest)
+        .ProducesProblem(StatusCodes.Status404NotFound)
+        .Produces(StatusCodes.Status401Unauthorized);
 
         group.MapDelete("/{id:guid}", async (Guid id, ClaimsPrincipal userClaims, AppDbContext db) =>
         {
@@ -386,7 +414,13 @@ public static class BookmarkEndpoints
             await db.SaveChangesAsync();
 
             return Results.NoContent();
-        });
+        })
+        .WithName("DeleteBookmark")
+        .WithSummary("Delete a bookmark")
+        .WithDescription("Deletes an existing bookmark by its ID.")
+        .Produces(StatusCodes.Status204NoContent)
+        .ProducesProblem(StatusCodes.Status404NotFound)
+        .Produces(StatusCodes.Status401Unauthorized);
 
         return app;
     }
