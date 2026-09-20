@@ -51,7 +51,7 @@
           <button
             type="button"
             class="cursor-pointer leading-0 shrink-0 opacity-70 hover:opacity-100 transition-opacity"
-            (click)="deleteTag(tag.id)"
+            (click)="promptDeleteTag(tag)"
             title="Delete tag"
           >
             <svg
@@ -81,3 +81,14 @@
     }
   </div>
 </div>
+
+<app-confirm-modal
+  [isOpen]="tagToDelete() !== null"
+  [title]="'Delete Tag'"
+  [message]="'Are you sure you want to delete tag #' + (tagToDelete()?.title ?? '') + '?'"
+  [confirmButtonText]="'Delete'"
+  [isDanger]="true"
+  [isSubmitting]="isDeleting()"
+  (confirm)="confirmDeleteTag()"
+  (close)="closeDeleteModal()"
+/>

@@ -117,8 +117,8 @@
       </a>
       <button
         aria-label="Delete bookmark"
-        class="p-1 rounded-sm hover:bg-accent transition-colors text-muted-foreground hover:text-foreground hover:text-destructive"
-        (click)="deleteBookmark(bookmark().id)"
+        class="p-1 rounded-sm hover:bg-accent transition-colors text-muted-foreground hover:text-foreground hover:text-destructive cursor-pointer"
+        (click)="openDeleteModal()"
       >
         <svg
           xmlns="http://www.w3.org/2000/svg"
@@ -235,8 +235,8 @@
         </a>
         <button
           aria-label="Delete bookmark"
-          class="p-1 rounded-sm hover:bg-accent transition-colors text-muted-foreground hover:text-foreground hover:text-destructive"
-          (click)="deleteBookmark(bookmark().id)"
+          class="p-1 rounded-sm hover:bg-accent transition-colors text-muted-foreground hover:text-foreground hover:text-destructive cursor-pointer"
+          (click)="openDeleteModal()"
         >
           <svg
             xmlns="http://www.w3.org/2000/svg"
@@ -288,3 +288,14 @@
     </div>
   </div>
 }
+
+<app-confirm-modal
+  [isOpen]="isDeleteModalOpen()"
+  [title]="'Delete Bookmark'"
+  [message]="'Are you sure you want to delete \u201C' + bookmark().title + '\u201D? This action cannot be undone.'"
+  [confirmButtonText]="'Delete'"
+  [isDanger]="true"
+  [isSubmitting]="isDeleting()"
+  (confirm)="confirmDeleteBookmark()"
+  (close)="closeDeleteModal()"
+/>

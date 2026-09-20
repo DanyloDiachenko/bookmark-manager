@@ -1,4 +1,4 @@
 export const environment = {
   production: false,
-  apiUrl: 'http://localhost:5075',
+  apiUrl: 'https://bookmark-manager-l5sb.onrender.com',
 };
