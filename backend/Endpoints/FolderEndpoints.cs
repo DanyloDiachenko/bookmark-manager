@@ -40,9 +40,17 @@ public static class FolderEndpoints
             {
                 return Results.BadRequest(new { message = "Folder title is required." });
             }
+            if (request.Title.Trim().Length > 100)
+            {
+                return Results.BadRequest(new { message = "Folder title cannot exceed 100 characters." });
+            }
             if (string.IsNullOrWhiteSpace(request.Color))
             {
                 return Results.BadRequest(new { message = "Folder color is required." });
+            }
+            if (request.Color.Trim().Length > 30)
+            {
+                return Results.BadRequest(new { message = "Folder color cannot exceed 30 characters." });
             }
 
             var userId = userClaims.GetUserId();
@@ -85,9 +93,17 @@ public static class FolderEndpoints
             {
                 return Results.BadRequest(new { message = "Folder title is required." });
             }
+            if (request.Title.Trim().Length > 100)
+            {
+                return Results.BadRequest(new { message = "Folder title cannot exceed 100 characters." });
+            }
             if (string.IsNullOrWhiteSpace(request.Color))
             {
                 return Results.BadRequest(new { message = "Folder color is required." });
+            }
+            if (request.Color.Trim().Length > 30)
+            {
+                return Results.BadRequest(new { message = "Folder color cannot exceed 30 characters." });
             }
 
             var userId = userClaims.GetUserId();

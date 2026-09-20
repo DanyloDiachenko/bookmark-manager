@@ -78,10 +78,17 @@ builder.Services.AddAuthorization();
 
 builder.Services.AddCors(options =>
 {
+    var configuredOrigins = builder.Configuration.GetSection("Cors:AllowedOrigins").Get<string[]>() ?? Array.Empty<string>();
+
     options.AddDefaultPolicy(policy =>
     {
         policy.SetIsOriginAllowed(origin =>
             {
+                if (configuredOrigins.Contains(origin, StringComparer.OrdinalIgnoreCase))
+                {
+                    return true;
+                }
+
                 if (Uri.TryCreate(origin, UriKind.Absolute, out var uri))
                 {
                     return uri.Host == "localhost" || uri.Host == "127.0.0.1";
