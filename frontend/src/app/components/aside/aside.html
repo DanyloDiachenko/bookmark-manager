@@ -7,7 +7,7 @@
 }
 
 <aside
-  class="fixed inset-y-0 left-0 z-50 w-64 max-w-[85vw] h-screen flex flex-col border-r border-border bg-secondary shadow-2xl transition-transform duration-300 ease-in-out xs:static xs:translate-x-0 xs:w-56 xs:shadow-none xs:z-auto"
+  class="fixed inset-y-0 left-0 z-50 w-64 max-w-[85vw] h-screen flex flex-col border-r border-border bg-secondary shadow-2xl transition-transform duration-300 ease-in-out xs:static xs:translate-x-0 xs:transform-none xs:w-56 xs:shadow-none xs:z-auto"
   [ngClass]="isOpen() ? 'translate-x-0' : '-translate-x-full xs:translate-x-0'"
 >
   <div class="px-4 py-4 border-b border-border flex items-center justify-between">
@@ -66,4 +66,26 @@
 <app-create-tag-modal
   [isOpen]="tagsService.isCreateModalOpened()"
   (close)="tagsService.closeCreateModal()"
+/>
+
+<app-confirm-modal
+  [isOpen]="foldersService.folderToDelete() !== null"
+  [title]="'Delete Folder'"
+  [message]="'Are you sure you want to delete the folder \u201C' + (foldersService.folderToDelete()?.title ?? '') + '\u201D? Bookmarks inside will not be deleted.'"
+  [confirmButtonText]="'Delete'"
+  [isDanger]="true"
+  [isSubmitting]="foldersService.isDeleting()"
+  (confirm)="foldersService.confirmDelete()"
+  (close)="foldersService.closeDeleteModal()"
+/>
+
+<app-confirm-modal
+  [isOpen]="tagsService.tagToDelete() !== null"
+  [title]="'Delete Tag'"
+  [message]="'Are you sure you want to delete tag #' + (tagsService.tagToDelete()?.title ?? '') + '?'"
+  [confirmButtonText]="'Delete'"
+  [isDanger]="true"
+  [isSubmitting]="tagsService.isDeleting()"
+  (confirm)="tagsService.confirmDelete()"
+  (close)="tagsService.closeDeleteModal()"
 />

@@ -81,14 +81,3 @@
     }
   </div>
 </div>
-
-<app-confirm-modal
-  [isOpen]="tagToDelete() !== null"
-  [title]="'Delete Tag'"
-  [message]="'Are you sure you want to delete tag #' + (tagToDelete()?.title ?? '') + '?'"
-  [confirmButtonText]="'Delete'"
-  [isDanger]="true"
-  [isSubmitting]="isDeleting()"
-  (confirm)="confirmDeleteTag()"
-  (close)="closeDeleteModal()"
-/>

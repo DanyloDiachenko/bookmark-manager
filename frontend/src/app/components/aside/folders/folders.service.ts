@@ -2,6 +2,7 @@ import { HttpClient } from '@angular/common/http';
 import { inject, Injectable, signal } from '@angular/core';
 import { CreateFolderRequest, IFolder } from './folders.types';
 import { finalize, Observable, tap } from 'rxjs';
+import { BookmarkFiltersService } from '../../screens/bookmark-screen/bookmark-filters.service';
 
 @Injectable({
   providedIn: 'root',
@@ -13,6 +14,35 @@ export class FoldersService {
   readonly folders = this.foldersSignal.asReadonly();
   readonly isLoading = this.isLoadingSignal.asReadonly();
   readonly isCreateModalOpened = signal<boolean>(false);
+
+  private readonly bookmarkFiltersService = inject(BookmarkFiltersService);
+  readonly folderToDelete = signal<IFolder | null>(null);
+  readonly isDeleting = signal<boolean>(false);
+
+  public promptDelete(folder: IFolder): void {
+    this.folderToDelete.set(folder);
+  }
+
+  public closeDeleteModal(): void {
+    this.folderToDelete.set(null);
+  }
+
+  public confirmDelete(): void {
+    const target = this.folderToDelete();
+    if (!target) return;
+
+    this.isDeleting.set(true);
+    this.delete(target.id)
+      .pipe(finalize(() => this.isDeleting.set(false)))
+      .subscribe({
+        next: () => {
+          if (this.bookmarkFiltersService.state().folderId === target.id) {
+            this.bookmarkFiltersService.toggleFolder(target.id);
+          }
+          this.closeDeleteModal();
+        },
+      });
+  }
 
   public openCreateModal(): void {
     this.isCreateModalOpened.set(true);

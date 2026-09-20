@@ -9,6 +9,7 @@ import { FoldersService } from './folders/folders.service';
 import { TagsService } from './tags/tags.service';
 import { CreateFolderModal } from '../modals/create-folder-modal/create-folder-modal';
 import { CreateTagModal } from '../modals/create-tag-modal/create-tag-modal';
+import { ConfirmModal } from '../modals/confirm-modal/confirm-modal';
 
 @Component({
   selector: 'app-aside',
@@ -20,6 +21,7 @@ import { CreateTagModal } from '../modals/create-tag-modal/create-tag-modal';
     NgClass,
     CreateFolderModal,
     CreateTagModal,
+    ConfirmModal,
   ],
   templateUrl: './aside.html',
   styleUrl: './aside.css',
@@ -36,6 +38,14 @@ export class Aside {
 
   @HostListener('document:keydown.escape')
   public onEscape(): void {
+    if (this.foldersService.folderToDelete() !== null) {
+      this.foldersService.closeDeleteModal();
+      return;
+    }
+    if (this.tagsService.tagToDelete() !== null) {
+      this.tagsService.closeDeleteModal();
+      return;
+    }
     if (this.foldersService.isCreateModalOpened()) {
       this.foldersService.closeCreateModal();
       return;

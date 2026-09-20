@@ -87,14 +87,3 @@
     }
   </div>
 </div>
-
-<app-confirm-modal
-  [isOpen]="folderToDelete() !== null"
-  [title]="'Delete Folder'"
-  [message]="'Are you sure you want to delete the folder \u201C' + (folderToDelete()?.title ?? '') + '\u201D? Bookmarks inside will not be deleted.'"
-  [confirmButtonText]="'Delete'"
-  [isDanger]="true"
-  [isSubmitting]="isDeleting()"
-  (confirm)="confirmDeleteFolder()"
-  (close)="closeDeleteModal()"
-/>
