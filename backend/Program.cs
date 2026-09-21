@@ -91,7 +91,10 @@ builder.Services.AddCors(options =>
 
                 if (Uri.TryCreate(origin, UriKind.Absolute, out var uri))
                 {
-                    return uri.Host == "localhost" || uri.Host == "127.0.0.1";
+                    return uri.Host == "localhost" ||
+                           uri.Host == "127.0.0.1" ||
+                           uri.Host.Equals("vercel.app", StringComparison.OrdinalIgnoreCase) ||
+                           uri.Host.EndsWith(".vercel.app", StringComparison.OrdinalIgnoreCase);
                 }
                 return false;
             })
