@@ -367,17 +367,6 @@ The .NET 10 API is containerized using a multi-stage `Dockerfile`:
 
 ---
 
-## 💡 Engineering Highlights (For Technical Interviews)
-
-- **Reactive Signal-Driven Architecture**: Built on modern Angular Signals (`signal`, `computed`, `effect`) ensuring micro-optimizations, zero unnecessary change-detection cycles, and clean component decoupling.
-- **Automated OpenGraph Scraping Engine**: Backend metadata extraction service extracts OpenGraph metadata from target web pages, handles HTTP timeouts, extracts favicons, and provides defensive fallbacks for non-standard HTML.
-- **Independent Global vs. Filtered Stats**: Solved the common frontend state pitfall where applying a filter would skew global category badges. Designed a dedicated server-side aggregation endpoint (`/api/bookmarks/stats`) paired with optimistic client-side signal updates.
-- **Containing Block & CSS Stacking Context Isolation**: Debugged and resolved a tricky CSS containing block trap where CSS `transform` on the responsive sidebar clipped fixed-position modals; decoupled confirmation modals into root portals for seamless full-viewport backdrop rendering.
-- **Zero-Downtime Code-First Migrations**: Uses EF Core's `db.Database.Migrate()` on application bootstrap to ensure fresh deployments automatically synchronize schema with cloud PostgreSQL without manual CLI intervention.
-- **Strict Data Validation & Duplicate Prevention**: FluentValidation rules prevent duplicate titles across bookmarks, folders, and tags on a per-user tenant basis, enforcing data integrity at both application and database layers.
-
----
-
 ## 👤 Author & License
 
 - **Author**: Danylo Diachenko
